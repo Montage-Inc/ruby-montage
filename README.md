@@ -1,8 +1,6 @@
-# Ruby::Montage
+# Ruby Montage
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/ruby/montage`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+A Ruby wrapper for the [Montage](https://www.foo.com) API
 
 ## Installation
 
@@ -22,13 +20,37 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+In order to use the API, you will first have to retrieve an authorization token
 
-## Development
+    client = Montage::Client.new do |c|
+      c.username = "YOUR_USERNAME"
+      c.password = "YOUR_PASSWORD"
+    end
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `bin/console` for an interactive prompt that will allow you to experiment.
+    response = client.auth
+    token = response.token.value
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release` to create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+This token does not expire, so it is recommended that you store this token somewhere in your database to avoid having to
+make an API call to retrieve it on every request.
+
+After retrieving a token, you can simply initialize the client with your token
+
+    client = Montage::Client.new do |c|
+      c.token = "YOUR_TOKEN"
+    end
+
+All API actions are available as methods on the client object. The following methods are available:
+
+| Action                    | Method                             |
+| :------------------------ | :--------------------------------- |
+| Get a list of files       | `#files`                           |
+| Get a single file         | `#file(file_id)`                   |
+| Upload a new file         | `#new_file(file)`                  |
+| Delete a file             | `#destroy_file(file_id)`           |
+
+
+## Examples
+
 
 ## Contributing
 
