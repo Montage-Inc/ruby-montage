@@ -25,6 +25,8 @@ In order to use the API, you will first have to retrieve an authorization token
     client = Montage::Client.new do |c|
       c.username = "YOUR_USERNAME"
       c.password = "YOUR_PASSWORD"
+      c.api_version #optional, defaults to 1
+      c.domain = "test" #montage subdomain
     end
 
     response = client.auth
