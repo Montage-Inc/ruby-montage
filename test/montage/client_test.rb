@@ -27,6 +27,14 @@ class Montage::ClientTest < Minitest::Test
       end
       assert_equal 1, client.api_version
     end
+    should "overwrite the api version" do
+      client = Montage::Client.new do |config|
+        config.username = "me@foobar.com"
+        config.domain = "test"
+        config.api_version = 2
+      end
+      assert_equal 2, client.api_version
+    end
 
     should "accept a password" do
       client = Montage::Client.new do |config|
