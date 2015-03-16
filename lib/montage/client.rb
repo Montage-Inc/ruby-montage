@@ -6,10 +6,16 @@ require 'montage/client/files'
 
 module Montage
   class Client
-    attr_accessor :token, :username, :password, :domain
+    class MissingAttributeError < StandardError; end
+    
+    attr_accessor :token, :username, :password, :domain, :api_version
 
     def initialize
+      @api_version = 1
       yield(self) if block_given?
+      if not @domain 
+        raise MissingAttributeError, "You must declare the domain attribute"
+      end
     end
 
     def content_type
@@ -69,7 +75,7 @@ module Montage
     def connection
       @connect ||= Faraday.new do |f|
         f.adapter :net_http
-        f.url_prefix = "https://#{domain}.montage.com/api/v1/"
+        f.url_prefix = "https://#{domain}.montage.com/api/v#{api_version}/"
         f.headers["User-Agent"] = "Montage Ruby v#{Montage::VERSION}"
         f.headers["Content-Type"] = content_type
         f.headers["Accept"] = "*/*"
