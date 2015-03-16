@@ -3,11 +3,11 @@ require 'faraday'
 require 'faraday_middleware'
 require 'json'
 require 'montage/client/files'
+require 'montage/errors'
 
 module Montage
   class Client
-    class MissingAttributeError < StandardError; end
-    
+
     attr_accessor :token, :username, :password, :domain, :api_version
 
     def initialize

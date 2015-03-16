@@ -1,0 +1,1 @@
+class MissingAttributeError < StandardError; end
