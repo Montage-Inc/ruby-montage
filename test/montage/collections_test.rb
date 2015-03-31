@@ -3,7 +3,7 @@ require 'montage/collections'
 
 class Montage::CollectionsTest < Minitest::Test
   should "find collections" do
-    assert_equal Montage::Datum, Montage::Collections.find_class("datum")
+    assert_equal Montage::Schemas, Montage::Collections.find_class("schemas")
     assert_equal Montage::Errors, Montage::Collections.find_class("errors")
     assert_equal Montage::Files, Montage::Collections.find_class("files")
   end

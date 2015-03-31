@@ -11,7 +11,7 @@ class Montage::CollectionTest < Minitest::Test
     ]
 
     collection = TestCollection.new(raw_data)
-    collection.each { |item| assert item.is_a?(Montage::Data) }
+    collection.each { |item| assert item.is_a?(Montage::Schema) }
   end
 
   context "#singular?" do
@@ -48,11 +48,11 @@ class Montage::CollectionTest < Minitest::Test
 
   class TestCollection < Montage::Collection
     def self.collection_name
-      "datum"
+      "schemas"
     end
 
     def self.resource_name
-      "data"
+      "schema"
     end
   end
 end
