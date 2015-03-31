@@ -24,17 +24,39 @@ class Montage::QueryTest < Minitest::Test
     end
   end
 
-  context "#is_a_number?" do
+  context "#is_i?" do
     setup do
       @query = Montage::Query.new
     end
 
-    should "return true if it is a number" do
-      assert @query.is_a_number?("9.4")
+    should "return false if a float is passed in" do
+      assert !@query.is_i?("1.2")
     end
 
-    should "return false if it is not a number" do
-      assert !@query.is_a_number?("'foobar'")
+    should "return false if a string is passed in" do
+      assert !@query.is_i?("foo")
+    end
+
+    should "return true if an integer is passed in" do
+      assert @query.is_i?("1")
+    end
+  end
+
+  context "#is_f?" do
+    setup do
+      @query = Montage::Query.new
+    end
+
+    should "return false if an integer is passed in" do
+      assert !@query.is_f?("1")
+    end
+
+    should "return false if a string is passed in" do
+      assert !@query.is_f?("foo")
+    end
+
+    should "return true if a float is passed in" do
+      assert @query.is_f?("1.2")
     end
   end
 
@@ -88,6 +110,24 @@ class Montage::QueryTest < Minitest::Test
 
     should "accept and properly parse a hash" do
       assert_equal @expected, @query.order(foobar: :asc).query
+    end
+  end
+
+  context "#parse_value" do
+    setup do
+      @query = Montage::Query.new
+    end
+
+    should "return an integer if the value is an integer" do
+      assert_equal 1, @query.parse_value("1")
+    end
+
+    should "return a float if the value is a float" do
+      assert_equal 1.2, @query.parse_value("1.2")
+    end
+
+    should "return a sanitized string if the value is a string" do
+      assert_equal "foo", @query.parse_value("'foo'")
     end
   end
 
@@ -163,7 +203,7 @@ class Montage::QueryTest < Minitest::Test
     end
 
     should "parse the query to a json format" do
-      assert_equal "{\"filter\":{\"foo\":1,\"bar__gt\":2.0},\"order\":\"created_at desc\",\"limit\":10}", @query.where(foo: 1).where("bar > 2").order(created_at: :desc).limit(10).to_json
+      assert_equal "{\"filter\":{\"foo\":1,\"bar__gt\":2},\"order\":\"created_at desc\",\"limit\":10}", @query.where(foo: 1).where("bar > 2").order(created_at: :desc).limit(10).to_json
     end
   end
 end

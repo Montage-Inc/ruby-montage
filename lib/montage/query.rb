@@ -53,11 +53,18 @@ module Montage
       nil
     end
 
-    # Determines if the string value passed in is a number (integer or float) or not
+    # Determines if the string value passed in is an integer
     # Returns true or false
     #
-    def is_a_number?(value)
-      /\A[-+]?\d+\.?\d*\z/ === value
+    def is_i?(value)
+      /\A\d+\z/ === value
+    end
+
+    # Determines if the string value passed in is a float
+    # Returns true or false
+    #
+    def is_f?(value)
+      /\A\d+\.\d+\z/ === value
     end
 
     # Defines the order clause for the query and merges it into the query hash
@@ -88,6 +95,18 @@ module Montage
       self
     end
 
+    # Parses the query string value into an integer, float, or string
+    #
+    def parse_value(value)
+      if is_i?(value)
+        value.to_i
+      elsif is_f?(value)
+        value.to_f
+      else
+        value.gsub(/('|\(|\))/, "")
+      end
+    end
+
     # Parses the SQL string passed into the method
     #
     # Raises an exception if it is not a valid query (at least three "words"):
@@ -107,7 +126,7 @@ module Montage
       operator = OPERATOR_MAP[split[1].downcase]
       raise QueryError, "The operator you have used is not a valid Montage query operator" unless operator
 
-      value = is_a_number?(split[2]) ? split[2].to_f : split[2].gsub(/('|\(|\))/, "")
+      value = parse_value(split[2])
 
       { "#{split[0]}#{operator}".to_sym => value }
     end
