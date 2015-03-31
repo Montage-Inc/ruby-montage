@@ -23,10 +23,13 @@ module Montage
 
     def auth
       build_response("token") do
+        connection.basic_auth username, password
+
         connection.post do |req|
           req.url "auth"
-          req.options.basic_auth username, password
         end
+
+        connection.basic_auth token, ""
       end
     end
 
