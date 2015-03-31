@@ -28,6 +28,7 @@ module Montage
     def auth
       build_response("token") do
         connection.post do |req|
+          req.headers.delete("Authorization")
           req.url "auth/"
           req.body = { username: username, password: password }.to_json
         end
