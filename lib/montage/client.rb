@@ -74,7 +74,7 @@ module Montage
     def connection
       @connect ||= Faraday.new do |f|
         f.adapter :net_http
-        f.url_prefix = "https://#{domain}.montage.com/api/v#{api_version}/"
+        f.url_prefix = "http://#{domain}.dev.montagehot.club/api/v#{api_version}/"
         f.headers["User-Agent"] = "Montage Ruby v#{Montage::VERSION}"
         f.headers["Content-Type"] = content_type
         f.headers["Accept"] = "*/*"
