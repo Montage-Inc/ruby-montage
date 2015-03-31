@@ -27,8 +27,6 @@ module Montage
           req.url "auth/"
           req.body = { username: username, password: password }.to_json
         end
-
-        connection.basic_auth token, ""
       end
     end
 
