@@ -4,7 +4,7 @@ require 'montage/query'
 class Montage::QueryTest < Minitest::Test
   context "#nillify" do
     setup do
-      @query = Montage::Query.new("foo")
+      @query = Montage::Query.new
     end
 
     should "return the string if not empty" do
@@ -26,7 +26,7 @@ class Montage::QueryTest < Minitest::Test
 
   context "#is_a_number?" do
     setup do
-      @query = Montage::Query.new("foo")
+      @query = Montage::Query.new
     end
 
     should "return true if it is a number" do
@@ -40,7 +40,7 @@ class Montage::QueryTest < Minitest::Test
 
   context "#limit" do
     setup do
-      @query = Montage::Query.new("foo")
+      @query = Montage::Query.new
       @expected = { filter: {}, limit: 10 }
     end
 
@@ -55,7 +55,7 @@ class Montage::QueryTest < Minitest::Test
 
   context "#offset" do
     setup do
-      @query = Montage::Query.new("foo")
+      @query = Montage::Query.new
       @expected = { filter: {}, offset: 10 }
     end
 
@@ -70,7 +70,7 @@ class Montage::QueryTest < Minitest::Test
 
   context "#order" do
     setup do
-      @query = Montage::Query.new("foo")
+      @query = Montage::Query.new
       @expected = { filter: {}, order: "foobar asc" }
     end
 
@@ -93,7 +93,7 @@ class Montage::QueryTest < Minitest::Test
 
   context "#parse_string_clause" do
     setup do
-      @query = Montage::Query.new("foo")
+      @query = Montage::Query.new
     end
 
     should "raise an exception if the query string doesn't have the right number of values" do
@@ -143,7 +143,7 @@ class Montage::QueryTest < Minitest::Test
 
   context "#where" do
     setup do
-      @query = Montage::Query.new("foo")
+      @query = Montage::Query.new
     end
 
     should "append the filter to the query body" do
@@ -159,7 +159,7 @@ class Montage::QueryTest < Minitest::Test
 
   context "#to_json" do
     setup do
-      @query = Montage::Query.new("foo")
+      @query = Montage::Query.new
     end
 
     should "parse the query to a json format" do

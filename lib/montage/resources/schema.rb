@@ -1,9 +1,9 @@
 require 'montage/resource'
 
 module Montage
-  class Data < Resource
+  class Schema < Resource
     def self.resource_name
-      "data"
+      "schema"
     end
 
     def attribute_keys

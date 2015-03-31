@@ -4,7 +4,6 @@ require 'faraday_middleware'
 require 'json'
 require 'montage/client/files'
 require 'montage/errors'
-require 'montage/schema'
 
 module Montage
   class Client
@@ -63,10 +62,6 @@ module Montage
           req.params = options.to_json
         end
       end
-    end
-
-    def schema(name)
-      Schema.new(name)
     end
 
     def build_response(resource_name, &block)

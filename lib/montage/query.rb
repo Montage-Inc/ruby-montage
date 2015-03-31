@@ -16,10 +16,8 @@ module Montage
     }
 
     attr_accessor :query
-    attr_reader :schema_name
 
-    def initialize(schema_name)
-      @schema_name = schema_name
+    def initialize
       @query = { filter: {} }
     end
 
@@ -87,7 +85,6 @@ module Montage
       end
 
       @query.merge!(order: nillify("#{field} #{direction}".strip))
-
       self
     end
 
@@ -115,7 +112,7 @@ module Montage
       { "#{split[0]}#{operator}".to_sym => value }
     end
 
-    # Adds a where clause to the query hash
+    # Adds a where clause to the query filter hash
     #
     # Accepts either a Hash or a String
     #     where(foo: 1)

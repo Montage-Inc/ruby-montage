@@ -1,13 +1,13 @@
 require 'montage/collection'
 
 module Montage
-  class Datum < Collection
+  class Schemas < Collection
     def self.collection_name
-      "datum"
+      "schemas"
     end
 
     def self.resource_name
-      "data"
+      "schema"
     end
   end
 end

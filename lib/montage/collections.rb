@@ -1,6 +1,6 @@
 require 'montage/collections/errors'
 require 'montage/collections/files'
-require 'montage/collections/datum'
+require 'montage/collections/schemas'
 
 module Montage
   module Collections
@@ -8,7 +8,7 @@ module Montage
       [
         Montage::Errors,
         Montage::Files,
-        Montage::Datum
+        Montage::Schemas
       ]
     end
 
