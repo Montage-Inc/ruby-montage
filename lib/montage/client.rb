@@ -4,18 +4,16 @@ require 'faraday_middleware'
 require 'json'
 require 'montage/client/files'
 require 'montage/errors'
+require 'montage/schema'
 
 module Montage
   class Client
-
     attr_accessor :token, :username, :password, :domain, :api_version
 
     def initialize
       @api_version = 1
       yield(self) if block_given?
-      if not @domain 
-        raise MissingAttributeError, "You must declare the domain attribute"
-      end
+      raise MissingAttributeError, "You must declare the domain attribute" unless @domain
     end
 
     def content_type
@@ -65,6 +63,10 @@ module Montage
           req.params = options.to_json
         end
       end
+    end
+
+    def schema(name)
+      Schema.new(name)
     end
 
     def build_response(resource_name, &block)

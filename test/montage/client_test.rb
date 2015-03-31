@@ -13,7 +13,7 @@ class Montage::ClientTest < Minitest::Test
     end
 
     should "raise exception if no domain is passed" do
-      assert_raises(MissingAttributeError, "You must declare the domain attribute") do
+      assert_raises(Montage::MissingAttributeError, "You must declare the domain attribute") do
         client = Montage::Client.new do |config|
           config.username = "me@foobar.com"
         end
