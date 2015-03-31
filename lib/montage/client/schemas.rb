@@ -5,7 +5,7 @@ module Montage
       #
       # Returns a Montage::Response
       def schemas
-        get("schemas", "schema")
+        get("schemas/", "schema")
       end
 
       # Public: Get a single schema

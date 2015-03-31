@@ -10,7 +10,7 @@ module Montage
       # Returns a Montage::Response
       #
       def documents(schema, query: {})
-        post("schemas/#{schema}/documents", "document", query)
+        post("schemas/#{schema}/documents/", "document", query)
       end
 
       # Public: Fetch a document
