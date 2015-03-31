@@ -37,7 +37,7 @@ module Montage
 
     def parse_members
       klass = if body.is_a?(Array)
-        Montage::Collections.find_class(resource_name)
+        Montage::Collections.find_class("#{resource_name}s")
       else
         Montage::Resources.find_class(resource_name)
       end
