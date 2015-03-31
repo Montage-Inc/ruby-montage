@@ -9,6 +9,10 @@ require 'montage/errors'
 
 module Montage
   class Client
+    include Files
+    include Schemas
+    include Documents
+
     attr_accessor :token, :username, :password, :domain, :api_version
 
     def initialize
@@ -68,7 +72,8 @@ module Montage
 
     def build_response(resource_name, &block)
       response = yield
-      Montage::Response.new(response.status, response.body, resource_name)
+      montage_response = Montage::Response.new(response.status, response.body, resource_name)
+      @token = montage_response.token.value if resource_name == "token" && response.success?
     end
 
     def connection

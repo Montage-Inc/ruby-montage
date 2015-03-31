@@ -62,4 +62,36 @@ class Montage::ClientTest < Minitest::Test
       assert_equal "aaaa", client.token
     end
   end
+
+  context "on authorization" do
+    setup do
+      @client = Montage::Client.new do |c|
+        c.username = "foo"
+        c.password = "bar"
+        c.domain = "foobar"
+      end
+
+      @success_body = {
+        "data" => {
+          "token" => "foonizzle"
+        }
+      }
+    end
+
+    should "set the token if the response was a success" do
+      @client.build_response("token") do
+        Faraday::Response.new(body: @success_body, status: 200)
+      end
+
+      assert_equal "foonizzle", @client.token
+    end
+
+    should "skip setting the token if the response was not a success" do
+      @client.build_response("token") do
+        Faraday::Response.new(body: {}, status: 404)
+      end
+
+      assert_nil @client.token
+    end
+  end
 end
