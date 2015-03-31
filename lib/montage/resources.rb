@@ -2,6 +2,7 @@ require 'montage/resources/token'
 require 'montage/resources/error'
 require 'montage/resources/file'
 require 'montage/resources/schema'
+require 'montage/resources/document'
 
 module Montage
   module Resources
@@ -10,7 +11,8 @@ module Montage
         Montage::Token,
         Montage::Error,
         Montage::File,
-        Montage::Schema
+        Montage::Schema,
+        Montage::Document
       ]
     end
 

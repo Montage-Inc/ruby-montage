@@ -1,6 +1,7 @@
 require 'montage/collections/errors'
 require 'montage/collections/files'
 require 'montage/collections/schemas'
+require 'montage/collections/documents'
 
 module Montage
   module Collections
@@ -8,7 +9,8 @@ module Montage
       [
         Montage::Errors,
         Montage::Files,
-        Montage::Schemas
+        Montage::Schemas,
+        Montage::Documents
       ]
     end
 

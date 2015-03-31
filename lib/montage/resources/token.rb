@@ -1,3 +1,5 @@
+require 'montage/resource'
+
 module Montage
   class Token < Resource
     def self.resource_name

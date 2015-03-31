@@ -6,6 +6,7 @@ class Montage::CollectionsTest < Minitest::Test
     assert_equal Montage::Schemas, Montage::Collections.find_class("schemas")
     assert_equal Montage::Errors, Montage::Collections.find_class("errors")
     assert_equal Montage::Files, Montage::Collections.find_class("files")
+    assert_equal Montage::Documents, Montage::Collections.find_class("documents")
   end
 
   should "return the base collection by default" do

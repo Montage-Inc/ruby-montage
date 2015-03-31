@@ -5,9 +5,5 @@ module Montage
     def self.resource_name
       "file"
     end
-
-    def attribute_keys
-      %i{file_name}
-    end
   end
 end

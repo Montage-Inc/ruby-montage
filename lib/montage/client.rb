@@ -3,6 +3,8 @@ require 'faraday'
 require 'faraday_middleware'
 require 'json'
 require 'montage/client/files'
+require 'montage/client/schemas'
+require 'montage/client/documents'
 require 'montage/errors'
 
 module Montage

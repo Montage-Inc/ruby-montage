@@ -1,9 +1,9 @@
 require 'montage/resource'
 
 module Montage
-  class Schema < Resource
+  class Document < Resource
     def self.resource_name
-      "schema"
+      "document"
     end
   end
 end

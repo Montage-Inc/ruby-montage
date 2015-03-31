@@ -4,7 +4,7 @@ module Montage
 
     def initialize(status, body, resource_name = "resource")
       @status = status
-      @body = body["data"] || {}
+      @body = body["data"] || body || {}
       @resource_name = resource_name
       @members = parse_members
     end
