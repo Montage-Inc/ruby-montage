@@ -25,11 +25,11 @@ module Montage
     end
 
     def respond_to?(method_name, include_private = false)
-      resource_name.to_sym == method_name || super
+      resource_name.to_sym == method_name || "#{resource_name}s".to_sym == method_name || super
     end
 
     def method_missing(method_name, *args, &block)
-      return super unless resource_name.to_sym == method_name
+      return super unless resource_name.to_sym == method_name || "#{resource_name}s".to_sym == method_name
       members
     end
 
