@@ -25,8 +25,8 @@ In order to use the API, you will first have to retrieve an authorization token
     client = Montage::Client.new do |c|
       c.username = "YOUR_USERNAME"
       c.password = "YOUR_PASSWORD"
-      c.api_version #optional, defaults to 1
-      c.domain = "test" #montage subdomain
+      c.api_version # Optional, defaults to 1
+      c.domain = "test" # Your Montage subdomain
     end
 
     response = client.auth
@@ -39,17 +39,28 @@ After retrieving a token, you can simply initialize the client with your token
 
     client = Montage::Client.new do |c|
       c.token = "YOUR_TOKEN"
+      c.domain = "test" # Your Montage subdomain
     end
 
 All API actions are available as methods on the client object. The following methods are available:
 
-| Action                    | Method                             |
-| :------------------------ | :--------------------------------- |
-| Get a list of files       | `#files`                           |
-| Get a single file         | `#file(file_id)`                   |
-| Upload a new file         | `#new_file(file)`                  |
-| Delete a file             | `#destroy_file(file_id)`           |
-
+| Action                          | Method                                              |
+| :------------------------------ | :-------------------------------------------------- |
+| Get a list of files             | `#files`                                            |
+| Get a single file               | `#file(file_id)`                                    |
+| Upload a new file               | `#new_file(file)`                                   |
+| Delete a file                   | `#destroy_file(file_id)`                            |
+| :------------------------------ | :-------------------------------------------------- |
+| Get a list of schemas           | `#schemas`                                          |
+| Fetch a single schema           | `#schemas(name)`                                    |
+| :------------------------------ | :-------------------------------------------------- |
+| Query documents in a schema     | `#documents(schema, query)`                         |
+| Fetch a single document         | `#document(schema, document_uuid)`                  |
+| Fetch the next set of documents | `#document_cursor(schema, cursor)`                  |
+| Create a new document           | `#create_document(schema, document)`                |
+| Update a document               | `#update_document(schema, document_uuid, document)` |
+| Delete a document               | `#delete_document(schema, document_uuid)`           |
+| :------------------------------ | :-------------------------------------------------- |
 
 ## Examples
 
