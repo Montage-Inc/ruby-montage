@@ -84,7 +84,7 @@ module Montage
         f.headers["User-Agent"] = "Montage Ruby v#{Montage::VERSION}"
         f.headers["Content-Type"] = content_type
         f.headers["Accept"] = "*/*"
-        f.basic_auth token, ""
+        f.headers["Authorization"] = "Token #{token}"
         f.response :json, content_type: /\bjson$/
       end
     end
