@@ -22,25 +22,35 @@ Or install it yourself as:
 
 In order to use the API, you will first have to retrieve an authorization token
 
-    client = Montage::Client.new do |c|
-      c.username = "YOUR_USERNAME"
-      c.password = "YOUR_PASSWORD"
-      c.api_version # Optional, defaults to 1
-      c.domain = "test" # Your Montage subdomain
-    end
+```ruby
+client = Montage::Client.new do |c|
+  c.username = "YOUR_USERNAME"
+  c.password = "YOUR_PASSWORD"
+  c.api_version # Optional, defaults to 1
+  c.domain = "test" # Your Montage subdomain
+end
 
-    response = client.auth
-    token = response.token.value
+response = client.auth
+token = response.token.value
+```
 
 This token does not expire, so it is recommended that you store this token somewhere in your database to avoid having to
 make an API call to retrieve it on every request.
 
-After retrieving a token, you can simply initialize the client with your token
+After retrieving a token, you can simply use the client to perform API requests:
 
-    client = Montage::Client.new do |c|
-      c.token = "YOUR_TOKEN"
-      c.domain = "test" # Your Montage subdomain
-    end
+```ruby
+client.schemas
+```
+
+Or, use the same token later to initialize a new instance of the client:
+
+```ruby
+client = Montage::Client.new do |c|
+  c.token = "YOUR_TOKEN"
+  c.domain = "test" # Your Montage subdomain
+end
+```
 
 All API actions are available as methods on the client object. The following methods are available:
 
