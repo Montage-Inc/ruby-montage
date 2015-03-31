@@ -25,7 +25,7 @@ module Montage
       build_response("token") do
         connection.post do |req|
           req.url "auth"
-          req.basic_auth username, password
+          req.options.basic_auth username, password
         end
       end
     end
