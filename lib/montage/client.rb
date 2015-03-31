@@ -25,7 +25,7 @@ module Montage
       build_response("token") do
         connection.post do |req|
           req.url "auth/"
-          req.params = { username: username, password: password }.to_json
+          req.body = { username: username, password: password }.to_json
         end
 
         connection.basic_auth token, ""
@@ -45,7 +45,7 @@ module Montage
       build_response(resource_name) do
         connection.post do |req|
           req.url url
-          req.params = options.to_json
+          req.body = options.to_json
         end
       end
     end
@@ -54,7 +54,7 @@ module Montage
       build_response(resource_name) do
         connection.put do |req|
           req.url url
-          req.params = options.to_json
+          req.body = options.to_json
         end
       end
     end
@@ -63,7 +63,7 @@ module Montage
       build_response(resource_name) do
         connection.delete do |req|
           req.url url
-          req.params = options.to_json
+          req.body = options.to_json
         end
       end
     end
