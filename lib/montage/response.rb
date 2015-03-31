@@ -1,3 +1,6 @@
+require 'montage/collections'
+require 'montage/resources'
+
 module Montage
   class Response
     attr_reader :status, :body, :members, :resource_name
