@@ -7,7 +7,7 @@ A Ruby wrapper for the [Montage](https://www.foo.com) API
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'ruby-montage'
+gem 'ruby-montage', require: 'montage'
 ```
 
 And then execute:
