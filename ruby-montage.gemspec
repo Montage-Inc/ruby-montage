@@ -9,10 +9,6 @@ Gem::Specification.new do |spec|
   spec.authors       = ["dphaener"]
   spec.email         = ["dphaener@gmail.com"]
 
-  # if spec.respond_to?(:metadata)
-  #   spec.metadata['allowed_push_host'] = "TODO: Set to 'http://mygemserver.com' to prevent pushes to rubygems.org, or delete to allow pushes to any server."
-  # end
-
   spec.summary       = %q{A Ruby wrapper for the Monatge REST API}
   spec.description   = %q{A better description is coming...}
   spec.homepage      = "https://github.com/EditLLC/ruby-montage"
@@ -27,7 +23,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "shoulda-context", "~> 1.0"
   spec.add_development_dependency "mocha", "~> 1.1"
-  spec.add_development_dependency "simplecov', '~> 0.7.1"
+  spec.add_development_dependency "simplecov", "~> 0.9.1"
   spec.add_development_dependency "coveralls"
 
   spec.add_runtime_dependency "faraday", "~> 0.9"

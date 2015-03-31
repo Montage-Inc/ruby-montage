@@ -74,7 +74,12 @@ module Montage
     def build_response(resource_name, &block)
       response = yield
       montage_response = Montage::Response.new(response.status, response.body, resource_name)
-      @token = montage_response.token.value if resource_name == "token" && response.success?
+
+      if resource_name == "token" && response.success?
+        @token = montage_response.token.value
+        connection.headers["Authorization"] = "Token #{token}"
+      end
+
       montage_response
     end
 

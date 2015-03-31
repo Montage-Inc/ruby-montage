@@ -84,6 +84,7 @@ class Montage::ClientTest < Minitest::Test
       end
 
       assert_equal "foonizzle", @client.token
+      assert_equal "Token foonizzle", @client.connection.headers["Authorization"]
     end
 
     should "skip setting the token if the response was not a success" do
