@@ -47,7 +47,7 @@ module Montage
       #
       # Returns a Montage::Response
       def create_document(schema, document)
-        post("schemas/#{schema}/documents/", "document", document)
+        post("schemas/#{schema}/documents/create/", "document", document)
       end
 
       # Public: Update a document
