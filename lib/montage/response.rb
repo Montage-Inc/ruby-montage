@@ -7,9 +7,17 @@ module Montage
 
     def initialize(status, body, resource_name = "resource")
       @status = status
-      @body = body["data"] || body || {}
+      @body = get_body(body)
       @resource_name = resource_name
       @members = parse_members
+    end
+
+    def get_body(body)
+      if body.is_a?(Hash)
+        body["data"] || body || {}
+      else
+        body || []
+      end
     end
 
     def success?
