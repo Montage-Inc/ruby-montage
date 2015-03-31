@@ -74,6 +74,7 @@ module Montage
       response = yield
       montage_response = Montage::Response.new(response.status, response.body, resource_name)
       @token = montage_response.token.value if resource_name == "token" && response.success?
+      montage_response
     end
 
     def connection
