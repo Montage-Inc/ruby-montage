@@ -9,13 +9,13 @@ Gem::Specification.new do |spec|
   spec.authors       = ["dphaener"]
   spec.email         = ["dphaener@gmail.com"]
 
-  # if spec.respond_to?(:metadata)
-  #   spec.metadata['allowed_push_host'] = "TODO: Set to 'http://mygemserver.com' to prevent pushes to rubygems.org, or delete to allow pushes to any server."
-  # end
+  if spec.respond_to?(:metadata)
+    spec.metadata['allowed_push_host'] = "TODO: Set to 'http://mygemserver.com' to prevent pushes to rubygems.org, or delete to allow pushes to any server."
+  end
 
   spec.summary       = %q{A Ruby wrapper for the Monatge REST API}
-  spec.description   = %q{TODO: Write a longer description or delete this line.}
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.description   = %q{A better description is coming...}
+  spec.homepage      = "https://github.com/EditLLC/ruby-montage"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
