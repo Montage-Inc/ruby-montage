@@ -1,5 +1,5 @@
-require "montage/version"
+require 'montage/version'
+require 'montage/client'
 
 module Montage
-  # Your code goes here...
 end
