@@ -71,8 +71,35 @@ All API actions are available as methods on the client object. The following met
 | Update a document               | `#update_document(schema, document_uuid, document)` |
 | Delete a document               | `#delete_document(schema, document_uuid)`           |
 
-## Examples
+## The Query Object
 
+The Montage API requires a JSON serialized query object to query a schema
+
+    {
+      "limit": 10,
+      "offset": 10,
+      "order_by": "foo",
+      "direction": "asc",
+      "filter": {
+        ...
+      }
+    }
+
+The Ruby Montage API wrapper provides a query object that has a DSL similar to that of a Rails ActiveRecord object:
+
+```ruby
+query = Montage::Query.new
+query = query.where("foo > 5").limit(10).order(foo: :asc)
+```
+
+This query object can now be passed into an API call to documents to retrieve a set of documents:
+
+```ruby
+c.documents("movies", query)
+```
+
+Using this query object is not required in order to complete a request. Any object that responds to `.to_json` and
+returns an object that conforms to the above query standards will work. This is merely provided as a convenience.
 
 ## Contributing
 
