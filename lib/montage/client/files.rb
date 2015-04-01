@@ -5,7 +5,7 @@ module Montage
       #
       # Returns a Montage::Response
       def files
-        get("files", "file")
+        get("files/", "file")
       end
 
       # Public: Get a single file
@@ -14,7 +14,7 @@ module Montage
       #
       # Returns a Montage::Response
       def file(file_id)
-        get("files/#{file_id}", "file")
+        get("files/#{file_id}/", "file")
       end
 
       # Public: Upload a new file
@@ -23,7 +23,7 @@ module Montage
       #
       # Returns a Montage::Response
       def new_file(file)
-        post("files", "file", file)
+        post("files/", "file", file)
       end
 
       # Public: Delete a file
@@ -32,7 +32,7 @@ module Montage
       #
       # Returns a Montage::Response
       def destroy_file(file_id)
-        delete("files/#{file_id}", "file")
+        delete("files/#{file_id}/", "file")
       end
     end
   end

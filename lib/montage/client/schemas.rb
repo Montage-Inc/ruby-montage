@@ -12,7 +12,7 @@ module Montage
       #
       # Returns a Montage::Response
       def schema(name)
-        get("schemas/#{name}", "schema")
+        get("schemas/#{name}/", "schema")
       end
     end
   end
