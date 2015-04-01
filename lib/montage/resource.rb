@@ -7,7 +7,8 @@ module Montage
     end
 
     def attribute_keys
-      attributes.keys.map(&:to_sym)
+      return attributes.keys.map(&:to_sym) if attributes.is_a?(Hash)
+      nil
     end
 
     def self.resource_name
