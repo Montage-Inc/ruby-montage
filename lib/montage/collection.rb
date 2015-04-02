@@ -22,7 +22,14 @@ module Montage
     end
 
     def parse_items
-      raw_items.map { |raw_item| item_class.new(raw_item) }
+      raw_items.map do |raw_item|
+        if raw_item["_meta"]
+          raw_item["created_at"] = raw_item["_meta"]["created"]
+          raw_item["updated_at"] = raw_item["_meta"]["modified"]
+        end
+
+        item_class.new(raw_item)
+      end
     end
 
     def singular?

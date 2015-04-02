@@ -39,12 +39,12 @@ module Montage
       klass = if body.is_a?(Array)
         Montage::Collections.find_class("#{resource_name}s")
       else
-        Montage::Resources.find_class(resource_name)
-      end
+        if body["_meta"]
+          body["created_at"] = body["_meta"]["created"]
+          body["updated_at"] = body["_meta"]["modified"]
+        end
 
-      if body["_meta"]
-        body["created_at"] = body["_meta"]["created"]
-        body["updated_at"] = body["_meta"]["modified"]
+        Montage::Resources.find_class(resource_name)
       end
 
       klass.new(body)
