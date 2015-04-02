@@ -42,6 +42,11 @@ module Montage
         Montage::Resources.find_class(resource_name)
       end
 
+      if body["_meta"]
+        body["created_at"] = body["_meta"]["created"]
+        body["updated_at"] = body["_meta"]["modified"]
+      end
+
       klass.new(body)
     end
   end
