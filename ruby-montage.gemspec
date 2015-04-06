@@ -30,4 +30,5 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "faraday_middleware", "~> 0.9"
   spec.add_runtime_dependency "json", "~> 1.8"
   spec.add_runtime_dependency "minitest", "~> 5.5.0"
+  spec.add_runtime_dependency "net-http-persistent"
 end
