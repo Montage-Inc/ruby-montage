@@ -38,7 +38,7 @@ module Montage
 
     def parse_members
       klass = if body.is_a?(Array)
-        Montage::Resources.find_class(Error) unless body['errors']
+        if body['errors'] return Montage::Resources.find_class(Error)
         Montage::Collections.find_class("#{resource_name}s")
       else
         if body["_meta"]
@@ -46,7 +46,7 @@ module Montage
           body["updated_at"] = body["_meta"]["modified"]
         end
 
-        Montage::Resources.find_class(Error) unless body['errors']
+        if body['errors'] return Montage::Resources.find_class(Error)
         Montage::Resources.find_class(resource_name)
       end
 
