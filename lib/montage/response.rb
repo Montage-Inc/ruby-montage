@@ -21,6 +21,7 @@ module Montage
     end
 
     def success?
+      if @body['errors'] return false
       (200..299).include?(status)
     end
 
