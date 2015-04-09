@@ -27,6 +27,13 @@ class Montage::ReponseTest < Minitest::Test
       end
     end
 
+    should "be false if the body has errors" do
+      (200..299).each do |status|
+        subject = Montage::Response.new(status, {'errors'=> 'true'})
+        assert !subject.success?
+      end
+    end
+
     should "be false if the status code is 404" do
       subject = Montage::Response.new(404, {})
       assert !subject.success?

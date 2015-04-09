@@ -21,8 +21,11 @@ module Montage
     end
 
     def success?
-      if @body['errors'] return false
-      (200..299).include?(status)
+      if @body['errors'] 
+        return false
+      else 
+        (200..299).include?(status)
+      end
     end
 
     def respond_to?(method_name, include_private = false)
@@ -38,16 +41,22 @@ module Montage
 
     def parse_members
       klass = if body.is_a?(Array)
-        if body['errors'] return Montage::Resources.find_class(Error)
-        Montage::Collections.find_class("#{resource_name}s")
+        if body['errors'] 
+          Montage::Resources.find_class(Error)
+        else 
+          Montage::Collections.find_class("#{resource_name}s")
+        end
       else
         if body["_meta"]
           body["created_at"] = body["_meta"]["created"]
           body["updated_at"] = body["_meta"]["modified"]
         end
 
-        if body['errors'] return Montage::Resources.find_class(Error)
-        Montage::Resources.find_class(resource_name)
+        if body['errors'] 
+          Montage::Resources.find_class(Error)
+        else 
+          Montage::Resources.find_class(resource_name)
+        end
       end
 
       klass.new(body)
