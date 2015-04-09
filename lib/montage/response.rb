@@ -37,14 +37,14 @@ module Montage
 
     def parse_members
       klass = if body.is_a?(Array)
-        Montage::Collections.find_class("#{resource_name}s")
+        raise Error, "resource name is different than what you passed in" unless Montage::Collections.find_class("#{resource_name}s")
       else
         if body["_meta"]
           body["created_at"] = body["_meta"]["created"]
           body["updated_at"] = body["_meta"]["modified"]
         end
 
-        Montage::Resources.find_class(resource_name)
+        raise Error, "resource name is different than what you passed in" unless Montage::Resources.find_class(resource_name)
       end
 
       klass.new(body)
