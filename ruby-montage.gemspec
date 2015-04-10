@@ -31,4 +31,9 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency "json", "~> 1.8"
   spec.add_runtime_dependency "minitest", "~> 5.5.0"
   spec.add_runtime_dependency "net-http-persistent"
+
+  if spec.respond_to?(:metadata)
+    spec.metadata['allowed_push_host'] = "https://repo.fury.io/EwA3oy8vsnG-bzdB4KPT/me/"
+  end
+  
 end

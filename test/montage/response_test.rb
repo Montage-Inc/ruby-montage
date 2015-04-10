@@ -65,5 +65,14 @@ class Montage::ReponseTest < Minitest::Test
       assert @subject.token.is_a?(Montage::Token)
       assert_equal "fdjsklajdflkj3iq09h598", @subject.token.value
     end
+    should "not be successful" do
+      body = {
+        "errors" => {
+          "blah" => "fdjsklajdflkj3iq09h598"
+        }
+      }
+      subject = Montage::Response.new(200, body, "token")
+      assert_equal "fdjsklajdflkj3iq09h598", subject.errors.value
+    end
   end
 end
