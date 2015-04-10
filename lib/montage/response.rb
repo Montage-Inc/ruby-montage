@@ -23,7 +23,7 @@ module Montage
     def success?
       if @body['errors'] 
         return false
-      else 
+      else
         (200..299).include?(status)
       end
     end
@@ -41,7 +41,7 @@ module Montage
 
     def parse_members
       klass = if body.is_a?(Array)
-        if body[0]["errors"]
+        if body["errors"]
           Montage::Resources.find_class('Error')
         else 
           Montage::Collections.find_class("#{resource_name}s")
