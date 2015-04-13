@@ -47,12 +47,8 @@ module Montage
           body["created_at"] = body["_meta"]["created"]
           body["updated_at"] = body["_meta"]["modified"]
         end
-
-        if body["errors"]
-          Montage::Resources.find_class('error')
-        else 
-          Montage::Resources.find_class(resource_name)
-        end
+        
+        Montage::Resources.find_class(resource_name)
       end
 
       klass.new(body)
