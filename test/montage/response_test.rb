@@ -70,7 +70,7 @@ class Montage::ReponseTest < Minitest::Test
           "blah" => "fdjsklajdflkj3iq09h598"
         }
       }
-      subject = Montage::Response.new(200, body, "token")
+      subject = Montage::Response.new(200, body, "error")
       assert_equal Montage::Error, subject.errors.class
     end
   end
