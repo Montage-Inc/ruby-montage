@@ -12,7 +12,8 @@ module Montage
       ">=" => "__gte",
       "<" => "__lt",
       "<=" => "__lte",
-      "in" => "__in"
+      "in" => "__in",
+      "notin" => "__notin"
     }
 
     attr_accessor :query

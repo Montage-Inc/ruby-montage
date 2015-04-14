@@ -175,6 +175,9 @@ class Montage::QueryTest < Minitest::Test
     should "properly parse an IN query" do
       assert_equal({ foo__in: ["bar","barb","barber"] }, @query.parse_string_clause("foo IN (bar,barb,barber)"))
     end
+    should "properly parse an NOTIN query" do
+      assert_equal({ foo__notin: ["1","2","3","4"] }, @query.parse_string_clause("foo NOTIN (1,2,3,4)"))
+    end
     #
     # should "properly parse a CONTAINS query" do
     #   assert_equal({ foo__contains: "bar" }, @query.parse_string_clause("'bar' IN foo"))
