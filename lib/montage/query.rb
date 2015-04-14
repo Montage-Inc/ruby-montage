@@ -1,4 +1,5 @@
 require 'montage/errors'
+require 'montage/parser'
 require 'json'
 
 module Montage
@@ -95,17 +96,6 @@ module Montage
       self
     end
 
-    # Parses the query string value into an integer, float, or string
-    #
-    def parse_value(value)
-      if is_i?(value)
-        value.to_i
-      elsif is_f?(value)
-        value.to_f
-      else
-        value.gsub(/('|\(|\))/, "")
-      end
-    end
 
     # Parses the SQL string passed into the method
     #
@@ -119,17 +109,6 @@ module Montage
     #   parse_string_clause("foo <= 1")
     #   => { foo__lte: 1.0 }
     #
-    def parse_string_clause(clause)
-      split = clause.split(" ")
-      raise QueryError, "Your query has an undetermined error" unless split.count == 3
-
-      operator = OPERATOR_MAP[split[1].downcase]
-      raise QueryError, "The operator you have used is not a valid Montage query operator" unless operator
-
-      value = parse_value(split[2])
-
-      { "#{split[0]}#{operator}".to_sym => value }
-    end
 
     # Adds a where clause to the query filter hash
     #
@@ -143,7 +122,7 @@ module Montage
     # Returns a reference to self
     #
     def where(clause)
-      @query[:filter].merge!(clause.is_a?(String) ? parse_string_clause(clause) : clause)
+      @query[:filter].merge!(clause.is_a?(String) ? Parser.new(clause).query : clause)
       self
     end
 
