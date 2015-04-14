@@ -103,7 +103,12 @@ module Montage
       elsif is_f?(value)
         value.to_f
       else
-        value.gsub(/('|\(|\))/, "")
+        if value[0,1] == '('
+          value.gsub(/('|\(|\))/, "").split(',')
+        else
+          value.gsub(/('|\(|\))/, "")
+        end
+
       end
     end
 
