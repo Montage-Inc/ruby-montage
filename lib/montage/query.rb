@@ -105,7 +105,7 @@ module Montage
         value.to_f
       else
         if value[0,1] == '('
-          value.gsub(/('|\(|\))/, "").split(',')
+          values = value.gsub(/('|\(|\))/, "").split(',').map!{ |x| (is_i?(x) ? x.to_i : x) }
         else
           value.gsub(/('|\(|\))/, "")
         end
