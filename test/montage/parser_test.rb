@@ -8,15 +8,15 @@ class Montage::ParserTest < Minitest::Test
     end
 
     should "return an integer if the value is an integer" do
-      assert_equal 1, @parser.parse_value("1")
+      assert_equal 1, @parser.parse_value("1",'test')
     end
 
     should "return a float if the value is a float" do
-      assert_equal 1.2, @parser.parse_value("1.2")
+      assert_equal 1.2, @parser.parse_value("1.2",'test')
     end
 
     should "return a sanitized string if the value is a string" do
-      assert_equal "foo", @parser.parse_value("'foo'")
+      assert_equal "foo", @parser.parse_value("'foo'",'test')
     end
   end
 
@@ -59,7 +59,11 @@ class Montage::ParserTest < Minitest::Test
     end
 
     should "properly parse an IN query" do
-      assert_equal({ foo__in: "bar,barb,barber" }, Montage::Parser.new("foo IN (bar,barb,barber)").query)
+      assert_equal({ foo__in: ["bar","barb","barber"] }, Montage::Parser.new("foo IN (bar,barb,barber)").query)
+    end
+
+    should "properly parse an NOT IN query" do
+      assert_equal({ foo__notin: ["bar","barb","barber"] }, Montage::Parser.new("foo NOT IN (bar,barb,barber)").query)
     end
     #
     # should "properly parse a CONTAINS query" do
