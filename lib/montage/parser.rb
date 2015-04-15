@@ -21,7 +21,6 @@ module Montage
       @column_name = get_column_name
       @query_operator = get_operator
       @condition_set = parse_query_value
-
       @parse = parse_string_clause
     end
 
@@ -30,11 +29,7 @@ module Montage
     end
 
     def get_operator
-      operator = OPERATOR_MAP.find { |key, value| @clause.downcase.include?(' ' + key + ' ') }
-      if !operator 
-        raise QueryError, "The operator you have used is not a valid Montage query operator"
-      end
-      operator
+      OPERATOR_MAP.find { |key, value| @clause.downcase.include?(' ' + key + ' ') }
     end
 
     def get_query_value
@@ -50,6 +45,9 @@ module Montage
     end
 
     def parse_query_value
+      raise QueryError, "Your query has an undetermined error" unless @column_name
+      raise QueryError, "The operator you have used is not a valid Montage query operator" unless @query_operator
+
       value = get_query_value
       if is_i?(value)
         value.to_i
@@ -63,13 +61,7 @@ module Montage
     end
 
     def parse_string_clause
-
-      raise QueryError, "Your query has an undetermined error" unless @column_name && @condition_set
-      raise QueryError, "The operator you have used is not a valid Montage query operator" unless @query_operator[0]
-
-      value = parse_query_value
-
-      { "#{@column_name}#{@query_operator[1]}".to_sym => value }
+      { "#{@column_name}#{@query_operator[1]}".to_sym => @condition_set }
     end
 
     def is_i?(value)
