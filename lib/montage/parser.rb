@@ -94,7 +94,7 @@ module Montage
       elsif is_f?(value)
         value.to_f
       else
-        if @query_operator == 'in' || @query_operator == 'not in'
+        if operator == 'in' || operator == 'not in'
           values = value.gsub(/('|\(|\))/, "").split(',').map!{ |x| (is_i?(x) ? x.to_i : x) }
         else
           value.gsub(/('|\(|\))/, "")
