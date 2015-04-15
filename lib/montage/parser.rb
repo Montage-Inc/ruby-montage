@@ -33,15 +33,7 @@ module Montage
     end
 
     def get_query_value
-      query_parts = false
-      OPERATOR_MAP.each do |key, value|
-        if @clause.downcase.include? key
-          query_parts = @clause.downcase.gsub(key, value)
-          break
-        end
-      end
-      return false unless query_parts
-      query_parts.split(' ')[-1]
+      @clause.split(' ')[-1]
     end
 
     def parse_query_value
@@ -77,7 +69,7 @@ module Montage
 
     def to_array(value)
       type = ''
-      value.gsub(/('|\(|\))/, "").split(',').each_with_index.map{ |x, index| 
+      value.gsub(/('|\(|\))/, "").split(',').each_with_index.map do |x, index| 
         if index === 0
           if is_i?(x)
             type = 'int'
@@ -93,7 +85,8 @@ module Montage
         else
           x
         end
-      }
+      end
     end
+
   end
 end
