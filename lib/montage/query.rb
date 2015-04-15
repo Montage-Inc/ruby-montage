@@ -12,7 +12,8 @@ module Montage
       ">=" => "__gte",
       "<" => "__lt",
       "<=" => "__lte",
-      "in" => "__in"
+      "in" => "__in",
+      "notin" => "__notin"
     }
 
     attr_accessor :query
@@ -103,7 +104,12 @@ module Montage
       elsif is_f?(value)
         value.to_f
       else
-        value.gsub(/('|\(|\))/, "")
+        if value[0,1] == '('
+          values = value.gsub(/('|\(|\))/, "").split(',').map!{ |x| (is_i?(x) ? x.to_i : x) }
+        else
+          value.gsub(/('|\(|\))/, "")
+        end
+
       end
     end
 

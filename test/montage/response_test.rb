@@ -17,6 +17,16 @@ class Montage::ReponseTest < Minitest::Test
       subject  = Montage::Response.new(200, [{ "foo" => "bar" }])
       assert_equal([{ "foo" => "bar" }], subject.body)
     end
+
+    should "create an errors collection response if there are errors" do
+      subject  = Montage::Response.new(200, [{ "foo" => "bar" },{"test"=> "fail"}],"error")
+      assert_equal Montage::Errors, subject.errors.class
+    end
+
+    should "create an error resource if there is only one error" do
+      subject = Montage::Response.new(200, {"error" => {"foo" => "bar"}}, "error")
+      assert_equal Montage::Error, subject.errors.class
+    end
   end
 
   context "#success?" do
@@ -24,6 +34,13 @@ class Montage::ReponseTest < Minitest::Test
       (200..299).each do |status|
         subject = Montage::Response.new(status, {})
         assert subject.success?
+      end
+    end
+
+    should "be false if the body has errors" do
+      (200..299).each do |status|
+        subject = Montage::Response.new(status, {'errors'=> 'true'})
+        assert !subject.success?
       end
     end
 
@@ -50,13 +67,21 @@ class Montage::ReponseTest < Minitest::Test
           "token" => "fdjsklajdflkj3iq09h598"
         }
       }
-
       @subject = Montage::Response.new(200, @body, "token")
     end
 
     should "parse the response properly and make the members available via a method call" do
       assert @subject.token.is_a?(Montage::Token)
       assert_equal "fdjsklajdflkj3iq09h598", @subject.token.value
+    end
+    should "not be successful" do
+      body = {
+        "errors" => {
+          "blah" => "fdjsklajdflkj3iq09h598"
+        }
+      }
+      subject = Montage::Response.new(200, body, "error")
+      assert_equal Montage::Error, subject.errors.class
     end
   end
 end
