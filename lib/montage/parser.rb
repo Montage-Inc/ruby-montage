@@ -2,7 +2,7 @@ require 'montage/errors'
 require 'json'
 
 module Montage
-  class Parser
+  class QueryParser
     attr_reader :parse, :query_operator, :column_name, :clause, :condition_set
 
     OPERATOR_MAP = {

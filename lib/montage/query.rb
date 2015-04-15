@@ -109,7 +109,7 @@ module Montage
     # Returns a reference to self
     #
     def where(clause)
-      @query[:filter].merge!(clause.is_a?(String) ? Parser.new(clause).parse : clause)
+      @query[:filter].merge!(clause.is_a?(String) ? QueryParser.new(clause).parse : clause)
       self
     end
 
