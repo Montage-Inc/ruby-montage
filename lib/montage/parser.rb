@@ -21,7 +21,6 @@ module Montage
       @column_name = get_column_name
       @query_operator = get_operator
       @condition_set = parse_query_value
-      @parse = parse_string_clause
     end
 
     def get_column_name
@@ -37,9 +36,6 @@ module Montage
     end
 
     def parse_query_value
-      raise QueryError, "Your query has an undetermined error" unless @column_name
-      raise QueryError, "The operator you have used is not a valid Montage query operator" unless @query_operator
-
       value = get_query_value
       if is_i?(value)
         value.to_i
@@ -52,7 +48,7 @@ module Montage
       end
     end
 
-    def parse_string_clause
+    def parse
       { "#{@column_name}#{@query_operator[1]}".to_sym => @condition_set }
     end
 
