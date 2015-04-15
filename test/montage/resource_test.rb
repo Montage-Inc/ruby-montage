@@ -21,4 +21,42 @@ class Montage::ResourceTest < Minitest::Test
     resource = TestResource.new("id" => "1234", "name" => nil)
     assert_nil resource.name
   end
+
+  should "respond to all the attributes" do
+    @time = Time.now
+    attributes = {
+      "id" => "1234",
+      "name" => "foo",
+      "_meta" => {
+        "created" => @time,
+        "modified" => @time
+      }
+    }
+    resource = TestResource.new(attributes)
+
+    assert_equal "1234", resource.id
+    assert_equal "foo", resource.name
+    assert_equal @time, resource.created_at
+    assert_equal @time, resource.updated_at
+  end
+
+  context "#parse_items" do
+    should "properly parse the attributes" do
+      @time = Time.now
+      attributes = {
+        "id" => "1234",
+        "name" => "foo",
+        "_meta" => {
+          "created" => @time,
+          "modified" => @time
+        }
+      }
+      resource = TestResource.new(attributes)
+
+      assert_equal "1234", resource.items["id"]
+      assert_equal "foo", resource.items["name"]
+      assert_equal @time, resource.items["created_at"]
+      assert_equal @time, resource.items["updated_at"]
+    end
+  end
 end

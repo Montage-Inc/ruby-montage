@@ -74,7 +74,7 @@ module Montage
     def build_response(resource_name, &block)
       response = yield
 
-      if response.success? 
+      if response.success?
         montage_response = Montage::Response.new(response.status, response.body, resource_name)
       else
         montage_response = Montage::Response.new(response.status, response.body, 'error')

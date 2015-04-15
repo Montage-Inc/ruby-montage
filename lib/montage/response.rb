@@ -21,7 +21,7 @@ module Montage
     end
 
     def success?
-      if @body['errors'] 
+      if @body['errors']
         return false
       else
         (200..299).include?(status)
@@ -29,7 +29,7 @@ module Montage
     end
 
     def respond_to?(method_name, include_private = false)
-      resource_name.to_sym == method_name || "#{resource_name}s".to_sym == method_name || method_name == 'errors'.to_sym || super 
+      resource_name.to_sym == method_name || "#{resource_name}s".to_sym == method_name || method_name == 'errors'.to_sym || super
     end
 
     def method_missing(method_name, *args, &block)
@@ -41,13 +41,8 @@ module Montage
 
     def parse_members
       klass = if body.is_a?(Array)
-          Montage::Collections.find_class("#{resource_name}s")
+        Montage::Collections.find_class("#{resource_name}s")
       else
-        if body["_meta"]
-          body["created_at"] = body["_meta"]["created"]
-          body["updated_at"] = body["_meta"]["modified"]
-        end
-        
         Montage::Resources.find_class(resource_name)
       end
 

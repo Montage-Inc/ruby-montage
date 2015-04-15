@@ -18,9 +18,14 @@ class Montage::ReponseTest < Minitest::Test
       assert_equal([{ "foo" => "bar" }], subject.body)
     end
 
-    should "return errors " do
-      subject  = Montage::Response.new(200, [{ "foo" => "bar" },{'test'=> 'fail'}],'error')
-      assert_equal([{ "foo" => "bar" }], subject.errors)
+    should "create an errors collection response if there are errors" do
+      subject  = Montage::Response.new(200, [{ "foo" => "bar" },{"test"=> "fail"}],"error")
+      assert_equal Montage::Errors, subject.errors.class
+    end
+
+    should "create an error resource if there is only one error" do
+      subject = Montage::Response.new(200, {"error" => {"foo" => "bar"}}, "error")
+      assert_equal Montage::Error, subject.errors.class
     end
   end
 
