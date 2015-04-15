@@ -68,7 +68,7 @@ class Montage::QueryParserTest < Minitest::Test
       end
 
       should "return the operator and its montage equivalent" do
-        assert_equal [">=", "__gte"], @parser.new('test >= foo').query_operator
+        assert_equal ">=", @parser.new('test >= foo').query_operator
       end
     end
   end

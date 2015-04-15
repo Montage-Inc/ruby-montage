@@ -28,7 +28,10 @@ module Montage
     end
 
     def get_operator
-      OPERATOR_MAP.find { |key, value| @clause.downcase.include?(' ' + key + ' ') }
+      operator = OPERATOR_MAP.find { |key, value| @clause.downcase.include?(' ' + key + ' ') }
+      if operator.kind_of?(Array)
+        operator[0]
+      end
     end
 
     def get_query_value
@@ -41,7 +44,7 @@ module Montage
         value.to_i
       elsif is_f?(value)
         value.to_f
-      elsif @query_operator[0] == 'not in' || @query_operator[0] == 'in'
+      elsif @query_operator == 'not in' || @query_operator == 'in'
         to_array(value)
       else
         value.gsub(/('|\(|\))/, "")
@@ -49,7 +52,9 @@ module Montage
     end
 
     def parse
-      { "#{@column_name}#{@query_operator[1]}".to_sym => @condition_set }
+      raise QueryError, "Your query has an undetermined error" unless @column_name
+      raise QueryError, "The operator you have used is not a valid Montage query operator" unless OPERATOR_MAP[@query_operator]
+      { "#{@column_name}#{OPERATOR_MAP[@query_operator]}".to_sym => @condition_set }
     end
 
     def is_i?(value)
