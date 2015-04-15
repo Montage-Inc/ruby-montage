@@ -4,7 +4,6 @@ require 'json'
 
 module Montage
   class Query
-
     attr_accessor :query
 
     def initialize
@@ -84,7 +83,6 @@ module Montage
       @query.merge!(order: nillify("#{field} #{direction}".strip))
       self
     end
-
 
     # Parses the SQL string passed into the method
     #
