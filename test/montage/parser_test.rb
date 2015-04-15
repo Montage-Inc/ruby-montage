@@ -47,6 +47,17 @@ class Montage::ParserTest < Minitest::Test
     should "properly parse an NOT IN query" do
       assert_equal({ foo__notin: ["bar","barb","barber"] }, Montage::Parser.new("foo NOT IN (bar,barb,barber)").parse)
     end
+
+    should "make all items a string if first item is a string" do
+      assert_equal({ foo__notin: ["bar","barb","barber","1"] }, Montage::Parser.new("foo NOT IN (bar,barb,barber,1)").parse)
+    end
+
+    should "make all items an int if first item is an int" do
+      assert_equal({ foo__notin: [1,2,0,0] }, Montage::Parser.new("foo NOT IN (1,2,'test','lol')").parse)
+    end
+    should "make all items a float if first item is a float" do
+      assert_equal({ foo__notin: [1.4,2,0,0] }, Montage::Parser.new("foo NOT IN (1.4,2,'test','lol')").parse)
+    end
     #
     # should "properly parse a CONTAINS query" do
     #   assert_equal({ foo__contains: "bar" }, @query.parse_string_clause("'bar' IN foo"))
