@@ -17,6 +17,11 @@ class Montage::ReponseTest < Minitest::Test
       subject  = Montage::Response.new(200, [{ "foo" => "bar" }])
       assert_equal([{ "foo" => "bar" }], subject.body)
     end
+
+    should "return errors " do
+      subject  = Montage::Response.new(200, [{ "foo" => "bar" },{'test'=> 'fail'}],'error')
+      assert_equal([{ "foo" => "bar" }], subject.errors)
+    end
   end
 
   context "#success?" do
