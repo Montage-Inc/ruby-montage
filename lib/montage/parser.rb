@@ -75,22 +75,6 @@ module Montage
       end
     end
 
-    def parse_value(value,operator)
-      if is_i?(value)
-        value.to_i
-      elsif is_f?(value)
-        value.to_f
-      else
-        if operator == 'in' || operator == 'not in'
-          values = value.gsub(/('|\(|\))/, "").split(',').map!{ |x| (is_i?(x) ? x.to_i : x) }
-        else
-          value.gsub(/('|\(|\))/, "")
-        end
-
-      end
-    end
-
-
     def parse_string_clause
 
       raise QueryError, "Your query has an undetermined error" unless @query_parts

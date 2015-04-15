@@ -2,24 +2,6 @@ require File.dirname(__FILE__) + '/../minitest_helper.rb'
 require 'montage/parser'
 
 class Montage::ParserTest < Minitest::Test
-  context "#parse_value" do
-    setup do
-      @parser = Montage::Parser.new
-    end
-
-    should "return an integer if the value is an integer" do
-      assert_equal 1, @parser.parse_value("1",'test')
-    end
-
-    should "return a float if the value is a float" do
-      assert_equal 1.2, @parser.parse_value("1.2",'test')
-    end
-
-    should "return a sanitized string if the value is a string" do
-      assert_equal "foo", @parser.parse_value("'foo'",'test')
-    end
-  end
-
   context "#parse_string_clause" do
 
     should "raise an exception if the query string doesn't have the right number of values" do
