@@ -3,6 +3,7 @@ require 'json'
 
 module Montage
   class Parser
+    attr_reader :query, :operator, :column_name, :clause
 
   	OPERATOR_MAP = {
       "!=" => "__not",
@@ -19,8 +20,7 @@ module Montage
   		if(clause)
   			@clause = clause
    			@column_name = get_column_name
-   			@query_operator = get_query_operator
-   			@montage_operator = get_montage_operator
+   			@operator = get_operator
    			@query_parts = get_query_parts
 
    			@query = parse_string_clause
@@ -31,27 +31,9 @@ module Montage
   		@clause.downcase.split(' ')[0]
   	end
 
-  	def get_query_operator
-  		query_operator = ''
-  		OPERATOR_MAP.each do |key, value|
-			  if @clause.downcase.include? key
-			  	query_operator = key
-			  	break
-			  end
-			end
-			query_operator
-  	end
-
-  	def get_montage_operator
-  		montage_operator = ''
-  		OPERATOR_MAP.each do |key, value|
-			  if @clause.downcase.include? key
-			  	montage_operator = value
-			  	break
-			  end
-			end
-			montage_operator
-  	end
+  	def get_operator
+      OPERATOR_MAP.select { |key, value| @clause.downcase.include?(key) }
+    end
 
   	def get_query_parts
   		query_parts = false
@@ -71,9 +53,9 @@ module Montage
         value[2].to_i
       elsif is_f?(value)
         value[2].to_f
-      elsif @query_operator == 'not in' || @query_operator == 'in'
+      elsif @operator.keys[0] == 'not in' || @operator.keys[0] == 'in'
         value[2].gsub(/('|\(|\))/, "").split(',').map!{ |x| (is_i?(x) ? x.to_i : x) }
-      elsif @query_operator == '='
+      elsif @operator.keys[0] == '='
       	if is_i?(value[1]) 
       		value[1].to_i
         else 
@@ -107,11 +89,11 @@ module Montage
   	def parse_string_clause
 
 			raise QueryError, "Your query has an undetermined error" unless @query_parts
-      raise QueryError, "The operator you have used is not a valid Montage query operator" unless @montage_operator
+      raise QueryError, "The operator you have used is not a valid Montage query operator" unless @operator.keys[0]
 
       value = parse_query_value
 
-      { "#{@query_parts[0]}#{@montage_operator}".to_sym => value }
+      { "#{@query_parts[0]}#{@operator.values[0]}".to_sym => value }
     end
 
     def is_i?(value)
@@ -124,6 +106,5 @@ module Montage
     def is_f?(value)
       /\A\d+\.\d+\z/ === value
     end
-    attr_reader :query, :query_operator, :montage_operator, :column_name, :clause
   end
 end
