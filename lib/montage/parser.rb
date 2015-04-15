@@ -3,7 +3,7 @@ require 'json'
 
 module Montage
   class Parser
-    attr_reader :parse, :query_operator, :column_name, :clause
+    attr_reader :parse, :query_operator, :column_name, :clause, :condition_set
 
   	OPERATOR_MAP = {
       "!=" => "__not",
@@ -22,6 +22,7 @@ module Montage
    			@column_name = get_column_name
    			@query_operator = get_operator
    			@query_parts = get_query_parts
+        @condition_set = parse_query_value
 
    			@parse = parse_string_clause
    		end
@@ -32,7 +33,11 @@ module Montage
   	end
 
   	def get_operator
-      OPERATOR_MAP.select { |key, value| @clause.downcase.include?(key) }
+      operator = OPERATOR_MAP.find { |key, value| @clause.downcase.include?(' ' + key + ' ') }
+      if !operator 
+        raise QueryError, "The operator you have used is not a valid Montage query operator"
+      end
+      operator
     end
 
   	def get_query_parts
@@ -53,9 +58,9 @@ module Montage
         value[2].to_i
       elsif is_f?(value)
         value[2].to_f
-      elsif @query_operator.keys[0] == 'not in' || @query_operator.keys[0] == 'in'
+      elsif @query_operator[0] == 'not in' || @query_operator[0] == 'in'
         value[2].gsub(/('|\(|\))/, "").split(',').map!{ |x| (is_i?(x) ? x.to_i : x) }
-      elsif @query_operator.keys[0] == '='
+      elsif @query_operator[0] == '='
       	if is_i?(value[1]) 
       		value[1].to_i
         else 
@@ -89,11 +94,11 @@ module Montage
   	def parse_string_clause
 
 			raise QueryError, "Your query has an undetermined error" unless @query_parts
-      raise QueryError, "The operator you have used is not a valid Montage query operator" unless @query_operator.keys[0]
+      raise QueryError, "The operator you have used is not a valid Montage query operator" unless @query_operator[0]
 
       value = parse_query_value
 
-      { "#{@query_parts[0]}#{@query_operator.values[0]}".to_sym => value }
+      { "#{@query_parts[0]}#{@query_operator[1]}".to_sym => value }
     end
 
     def is_i?(value)

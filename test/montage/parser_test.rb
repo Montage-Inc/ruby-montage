@@ -69,5 +69,14 @@ class Montage::ParserTest < Minitest::Test
     # should "properly parse a CONTAINS query" do
     #   assert_equal({ foo__contains: "bar" }, @query.parse_string_clause("'bar' IN foo"))
     # end
+    context "#get_operator" do
+      setup do
+        @parser = Montage::Parser
+      end
+
+      should "return the operator and its montage equivalent" do
+        assert_equal [">=", "__gte"], @parser.new('test >= foo').query_operator
+      end
+    end
   end
 end
