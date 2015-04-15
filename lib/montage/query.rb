@@ -1,5 +1,5 @@
 require 'montage/errors'
-require 'montage/parser'
+require 'montage/query_parser'
 require 'json'
 
 module Montage
