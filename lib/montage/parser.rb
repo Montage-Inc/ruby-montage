@@ -16,15 +16,13 @@ module Montage
       "in" => "__in"
     }
 
-    def initialize(clause=nil)
-      if(clause)
-        @clause = clause
-        @column_name = get_column_name
-        @query_operator = get_operator
-        @condition_set = parse_query_value
+    def initialize(clause)
+      @clause = clause
+      @column_name = get_column_name
+      @query_operator = get_operator
+      @condition_set = parse_query_value
 
-        @parse = parse_string_clause
-      end
+      @parse = parse_string_clause
     end
 
     def get_column_name
