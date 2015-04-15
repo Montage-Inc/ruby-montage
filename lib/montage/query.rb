@@ -4,17 +4,6 @@ require 'json'
 
 module Montage
   class Query
-    # Currently the Montage wrapper only supports the following operators
-    #
-    OPERATOR_MAP = {
-      "=" => "",
-      "!=" => "__not",
-      ">" => "__gt",
-      ">=" => "__gte",
-      "<" => "__lt",
-      "<=" => "__lte",
-      "in" => "__in"
-    }
 
     attr_accessor :query
 
@@ -122,7 +111,7 @@ module Montage
     # Returns a reference to self
     #
     def where(clause)
-      @query[:filter].merge!(clause.is_a?(String) ? Parser.new(clause).query : clause)
+      @query[:filter].merge!(clause.is_a?(String) ? Parser.new(clause).parse : clause)
       self
     end
 
