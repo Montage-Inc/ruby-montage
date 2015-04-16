@@ -1,21 +1,9 @@
 require 'montage/errors'
+require 'montage/query_parser'
 require 'json'
 
 module Montage
   class Query
-    # Currently the Montage wrapper only supports the following operators
-    #
-    OPERATOR_MAP = {
-      "=" => "",
-      "!=" => "__not",
-      ">" => "__gt",
-      ">=" => "__gte",
-      "<" => "__lt",
-      "<=" => "__lte",
-      "in" => "__in",
-      "notin" => "__notin"
-    }
-
     attr_accessor :query
 
     def initialize
@@ -96,23 +84,6 @@ module Montage
       self
     end
 
-    # Parses the query string value into an integer, float, or string
-    #
-    def parse_value(value)
-      if is_i?(value)
-        value.to_i
-      elsif is_f?(value)
-        value.to_f
-      else
-        if value[0,1] == '('
-          values = value.gsub(/('|\(|\))/, "").split(',').map!{ |x| (is_i?(x) ? x.to_i : x) }
-        else
-          value.gsub(/('|\(|\))/, "")
-        end
-
-      end
-    end
-
     # Parses the SQL string passed into the method
     #
     # Raises an exception if it is not a valid query (at least three "words"):
@@ -125,17 +96,6 @@ module Montage
     #   parse_string_clause("foo <= 1")
     #   => { foo__lte: 1.0 }
     #
-    def parse_string_clause(clause)
-      split = clause.split(" ")
-      raise QueryError, "Your query has an undetermined error" unless split.count == 3
-
-      operator = OPERATOR_MAP[split[1].downcase]
-      raise QueryError, "The operator you have used is not a valid Montage query operator" unless operator
-
-      value = parse_value(split[2])
-
-      { "#{split[0]}#{operator}".to_sym => value }
-    end
 
     # Adds a where clause to the query filter hash
     #
@@ -149,7 +109,7 @@ module Montage
     # Returns a reference to self
     #
     def where(clause)
-      @query[:filter].merge!(clause.is_a?(String) ? parse_string_clause(clause) : clause)
+      @query[:filter].merge!(clause.is_a?(String) ? QueryParser.new(clause).parse : clause)
       self
     end
 
