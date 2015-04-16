@@ -3,11 +3,12 @@ require 'montage/resources'
 
 module Montage
   class Response
-    attr_reader :status, :body, :members, :resource_name
+    attr_reader :status, :body, :members, :resource_name, :raw_body
 
     def initialize(status, body, resource_name = "resource")
       @status = status
       @body = get_body(body)
+      @raw_body = body.clone.freeze
       @resource_name = resource_name
       @members = parse_members
     end
@@ -21,7 +22,7 @@ module Montage
     end
 
     def success?
-      if @body['errors']
+      if raw_body['errors']
         return false
       else
         (200..299).include?(status)
