@@ -64,7 +64,7 @@ class Montage::QueryParserTest < Minitest::Test
     # end
   end
 
-  context "#get_operator" do
+  context "#query_operator" do
     setup do
       @parser = Montage::QueryParser
     end
