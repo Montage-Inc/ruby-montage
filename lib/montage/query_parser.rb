@@ -35,7 +35,7 @@ module Montage
     end
 
     def condition_set
-      @condition_set ||= @clause.split(' ')[-1]
+      @condition_set ||= @clause.split(/\s(?=(?:[^']|'[^']*')*$)/)[-1]
     end
 
     def parse_query_value
