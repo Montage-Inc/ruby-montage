@@ -58,10 +58,14 @@ class Montage::QueryParserTest < Minitest::Test
     should "make all items a float if first item is a float" do
       assert_equal({ foo__notin: [1.4,2,0,0] }, Montage::QueryParser.new("foo NOT IN (1.4,2,'test','lol')").parse)
     end
-    #
-    # should "properly parse a CONTAINS query" do
-    #   assert_equal({ foo__contains: "bar" }, @query.parse_string_clause("'bar' IN foo"))
-    # end
+
+    should "properly parse a LIKE query" do
+      assert_equal({ foo__contains: "bar" }, Montage::QueryParser.new("foo LIKE 'bar'").parse)
+    end
+
+    should "properly parse an ILIKE query" do
+      assert_equal({ foo__icontains: "bar" }, Montage::QueryParser.new("foo ILIKE 'bar'").parse)
+    end
   end
 
   context "#query_operator" do

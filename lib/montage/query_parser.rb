@@ -13,7 +13,9 @@ module Montage
       ">"  => "__gt",
       "<"  => "__lt",
       "not in" => "__notin",
-      "in" => "__in"
+      "in" => "__in",
+      "like" => "__contains",
+      "ilike" => "__icontains"
     }
 
     TYPE_MAP = {
