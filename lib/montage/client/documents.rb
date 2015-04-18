@@ -10,7 +10,7 @@ module Montage
       # Returns a Montage::Response
       #
       def documents(schema, query: {})
-        post("schemas/#{schema}/documents/", "document", query)
+        post("schemas/#{schema}/query/", "document", query)
       end
 
       # Public: Fetch a document
@@ -22,7 +22,7 @@ module Montage
       # Returns a Montage::Response
       #
       def document(schema, document_uuid)
-        get("schemas/#{schema}/documents/#{document_uuid}/", "document")
+        get("schemas/#{schema}/#{document_uuid}/", "document")
       end
 
       # Public: Get the set of documents for the given cursor
@@ -34,10 +34,10 @@ module Montage
       # Returns a Montage::Response
       #
       def document_cursor(schema, cursor)
-        get("schemas/#{schema}/documents/?cursor=#{cursor}", "document")
+        get("schemas/#{schema}/?cursor=#{cursor}", "document")
       end
 
-      # Public: Create a new document
+      # Public: Create or update a set of documents
       #
       # Params:
       #   schema   - *Required* The name of the schema to add the document to
@@ -46,8 +46,8 @@ module Montage
       # The document must conform to the schema definition
       #
       # Returns a Montage::Response
-      def create_document(schema, document)
-        post("schemas/#{schema}/documents/create/", "document", document)
+      def create_or_update_documents(schema, documents)
+        post("schemas/#{schema}/save/", "document", documents)
       end
 
       # Public: Update a document
@@ -60,8 +60,8 @@ module Montage
       # The document must conform to the schema definition
       #
       # Returns a Montage::Response
-      def update_document(schema, document_uuid, document)
-        post("schemas/#{schema}/documents/#{document_uuid}/", "document", document)
+      def update_document(schema, document)
+        post("schemas/#{schema}/save/", "document", document)
       end
 
       # Public: Delete a document
@@ -72,7 +72,7 @@ module Montage
       #
       # Returns a Montage::Response
       def delete_document(schema, document_uuid)
-        delete("schemas/#{schema}/documents/#{document_uuid}/", "document")
+        delete("schemas/#{schema}/#{document_uuid}/", "document")
       end
     end
   end
