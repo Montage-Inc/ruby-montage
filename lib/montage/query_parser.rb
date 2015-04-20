@@ -14,7 +14,7 @@ module Montage
       " < "      => "__lt",
       " not in " => "__notin",
       " in "     => "__in",
-      ": ["      => "__in",
+      " column_name_in "      => "__in",
       " like "   => "__contains",
       " ilike "  => "__icontains"
     }
@@ -26,15 +26,27 @@ module Montage
     }
 
     def initialize(clause)
-      @clause = clause
+      @clause = parse_clause(clause)
+    end
+
+    def parse_clause(clause)
+      if clause.is_a?(String)
+        if clause.downcase.include?(': [')
+          @clause = clause.sub! ': ', ' column_name_in '
+        else 
+          @clause = clause
+        end
+      elsif clause.is_a?(Hash)
+        if clause.values.first.is_a?(Array)
+          @clause = "#{clause.keys.first} column_name_in #{clause.values.first}"
+        else
+          @clause = "#{clause.keys.first} = #{clause.values.first}"
+        end
+      end
     end
 
     def column_name
-      if query_operator == '__in' && @clause.downcase.include?(': ')
-        @column_name ||= @clause.downcase.split(':')[0]
-      else
-        @column_name ||= @clause.downcase.split(' ')[0]
-      end
+      @column_name ||= @clause.downcase.split(' ')[0]
     end
 
     def query_operator
@@ -42,7 +54,7 @@ module Montage
     end
 
     def condition_set
-      @condition_set ||= @clause.split(/\s(?=(?:[^']|'[^']*')*$)/)[-1].tr('[','').tr(']','')
+      @condition_set ||= @clause.split(/\s(?=(?:[^']|'[^']*')*$)/)[-1]
     end
 
     def parse_query_value
@@ -62,7 +74,6 @@ module Montage
     def parse
       raise QueryError, "Your query has an undetermined error" unless column_name
       raise QueryError, "The operator you have used is not a valid Montage query operator" unless query_operator
-
       { "#{@column_name}#{query_operator}".to_sym => parse_query_value }
     end
 
