@@ -80,7 +80,7 @@ module Montage
         direction = "asc" unless %w(asc desc).include?(direction)
       end
 
-      @query.merge!(order: nillify("#{field} #{direction}".strip))
+      @query.merge!(order_by: field, ordering: direction)
       self
     end
 
