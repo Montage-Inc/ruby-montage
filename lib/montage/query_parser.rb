@@ -14,7 +14,7 @@ module Montage
       " < "      => "__lt",
       " not in " => "__notin",
       " in "     => "__in",
-      " column_name_in "      => "__in",
+      ": ["      => "__in",
       " like "   => "__contains",
       " ilike "  => "__icontains"
     }
@@ -26,23 +26,7 @@ module Montage
     }
 
     def initialize(clause)
-      @clause = parse_clause(clause)
-    end
-
-    def parse_clause(clause)
-      if clause.is_a?(String)
-        if clause.downcase.include?(': [')
-          @clause = clause.sub! ': ', ' column_name_in '
-        else 
-          @clause = clause
-        end
-      elsif clause.is_a?(Hash)
-        if clause.values.first.is_a?(Array)
-          @clause = "#{clause.keys.first} column_name_in #{clause.values.first}"
-        else
-          @clause = "#{clause.keys.first} = #{clause.values.first}"
-        end
-      end
+      @clause = clause
     end
 
     def column_name
@@ -51,6 +35,10 @@ module Montage
 
     def query_operator
       @query_operator ||= OPERATOR_MAP.find(Proc.new { [nil, nil] }) { |key, value| @clause.downcase.include?(key) }[1]
+    end
+
+    def montage_operator
+      @montage_operator ||= OPERATOR_MAP.find(Proc.new { [nil, nil] }) { |key, value| @clause.downcase.include?(key) }[0]
     end
 
     def condition_set
@@ -72,8 +60,16 @@ module Montage
     # Parse the clause into a Montage query
     #
     def parse
+      if @clause.is_a?(Hash)
+        if clause.values.first.is_a?(Array)
+          return {"#{clause.keys.first}__in".to_sym => @clause.values.first}
+        else
+          return @clause
+        end
+      end
       raise QueryError, "Your query has an undetermined error" unless column_name
       raise QueryError, "The operator you have used is not a valid Montage query operator" unless query_operator
+
       { "#{@column_name}#{query_operator}".to_sym => parse_query_value }
     end
 
