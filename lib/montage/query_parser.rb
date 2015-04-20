@@ -6,16 +6,17 @@ module Montage
     attr_reader :clause
 
     OPERATOR_MAP = {
-      "!=" => "__not",
-      ">=" => "__gte",
-      "<=" => "__lte",
-      "="  => "",
-      ">"  => "__gt",
-      "<"  => "__lt",
-      "not in" => "__notin",
-      "in" => "__in",
-      "like" => "__contains",
-      "ilike" => "__icontains"
+      " != "     => "__not",
+      " >= "     => "__gte",
+      " <= "     => "__lte",
+      " = "      => "",
+      " > "      => "__gt",
+      " < "      => "__lt",
+      " not in " => "__notin",
+      " in "     => "__in",
+      ": ["      => "__in",
+      " like "   => "__contains",
+      " ilike "  => "__icontains"
     }
 
     TYPE_MAP = {
@@ -29,15 +30,19 @@ module Montage
     end
 
     def column_name
-      @column_name ||= @clause.downcase.split(' ')[0]
+      if query_operator == '__in' && @clause.downcase.include?(': ')
+        @column_name ||= @clause.downcase.split(':')[0]
+      else
+        @column_name ||= @clause.downcase.split(' ')[0]
+      end
     end
 
     def query_operator
-      @query_operator ||= OPERATOR_MAP.find(Proc.new { [nil, nil] }) { |key, value| @clause.downcase.include?(' ' + key + ' ') }[1]
+      @query_operator ||= OPERATOR_MAP.find(Proc.new { [nil, nil] }) { |key, value| @clause.downcase.include?(key) }[1]
     end
 
     def condition_set
-      @condition_set ||= @clause.split(/\s(?=(?:[^']|'[^']*')*$)/)[-1]
+      @condition_set ||= @clause.split(/\s(?=(?:[^']|'[^']*')*$)/)[-1].tr('[','').tr(']','')
     end
 
     def parse_query_value
