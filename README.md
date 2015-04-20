@@ -72,14 +72,16 @@ All API actions are available as methods on the client object. The following met
 
 ## Documents
 
-| Action                          | Method                                              |
-| :------------------------------ | :-------------------------------------------------- |
-| Query documents in a schema     | `#documents(schema, query)`                         |
-| Fetch a single document         | `#document(schema, document_uuid)`                  |
-| Fetch the next set of documents | `#document_cursor(schema, cursor)`                  |
-| Create a new document           | `#create_document(schema, document)`                |
-| Update a document               | `#update_document(schema, document_uuid, document)` |
-| Delete a document               | `#delete_document(schema, document_uuid)`           |
+| Action                              | Method                                              |
+| :------------------------------     | :-------------------------------------------------- |
+| Query documents in a schema         | `#documents(schema, query)`                         |
+| Fetch a single document             | `#document(schema, document_uuid)`                  |
+| Fetch the next set of documents     | `#document_cursor(schema, cursor)`                  |
+| Create a new document               | `#create_document(schema, document)`                |
+| Update a document                   | `#update_document(schema, document_uuid, document)` |
+| Delete a document                   | `#delete_document(schema, document_uuid)`           |
+| Create or update a set of documents | `#create_or_update_documents(schema,documents)`     |
+
 
 ## Operators
 
