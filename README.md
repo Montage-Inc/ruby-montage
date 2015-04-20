@@ -81,6 +81,23 @@ All API actions are available as methods on the client object. The following met
 | Update a document               | `#update_document(schema, document_uuid, document)` |
 | Delete a document               | `#delete_document(schema, document_uuid)`           |
 
+## Operators
+
+| Operator    | Montage Equivalent |
+| :-----------| :---------         |
+| !=          | __not              |
+| >=          | __gte              |
+| <=          | __lte              |
+| =           |                    |
+| >           | __gt               |
+| <           | __lt               |
+| not in      | __notin            |
+| in          | __in               |
+| not in      | __notin            |
+| like        | __contains         |
+| ilike       | __icontains        |
+
+
 ## The Query Object
 
 The Montage API requires a JSON serialized query object to query a schema
