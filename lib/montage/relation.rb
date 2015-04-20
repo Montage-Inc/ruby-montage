@@ -2,7 +2,7 @@ require 'json'
 require 'montage/query_parser'
 
 module Montage
-  module Relation
+  class Relation
     # Currently the Montage wrapper only supports the following operators
     #
     OPERATOR_MAP = {
@@ -18,11 +18,6 @@ module Montage
     attr_reader :klass, :response, :query, :loaded
 
     alias_method :loaded?, :loaded
-
-    delegate :connection, to: Montage
-    delegate :cache, to: :klass
-    delegate :count, :length, :last, :[], :any?, :each_with_index, to: :to_a
-    delegate :map, :select, :each, to: :to_a
 
     def initialize(klass)
       @klass = klass
