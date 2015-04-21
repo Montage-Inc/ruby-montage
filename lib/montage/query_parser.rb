@@ -88,7 +88,7 @@ module Montage
     #
 
     def to_array(value)
-      values = value.gsub(/('|\(|\)|\[|\])/, "").split(',')
+      values = value.gsub(/('|\(|\))/, "").split(',')
       type = %i(is_i? is_f?).find(Proc.new { :is_s? }) { |t| send(t, values.first) }
       values.map { |v| v.send(TYPE_MAP[type]) }
     end
