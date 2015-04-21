@@ -12,6 +12,20 @@ class Montage::ResourceTest < Minitest::Test
     assert resource.respond_to?(:name)
   end
 
+  should "return empty attribute keys" do 
+    resource = TestResource.new
+    assert_equal [], resource.attribute_keys
+  end
+
+  should "return resource name" do
+    assert Montage::Resource.resource_name
+  end
+
+  should "should be singular" do
+    resource = TestResource.new
+    assert_equal true, resource.singular?
+  end
+
   should "process the raw data properly" do
     resource = TestResource.new("id" => "1234")
     assert_equal "1234", resource.id
