@@ -87,7 +87,7 @@ module Montage
     # Returns a copy of self
     #
     def where(clause)
-      clone.tap { |r| r.query[:filter].merge!(clause.is_a?(String) ? Montage::QueryParser.new(clause).parse : clause) }
+      clone.tap { |r| r.query[:filter].merge!(QueryParser.new(clause).parse) }
     end
 
     # Parses the current query hash and returns a JSON string
