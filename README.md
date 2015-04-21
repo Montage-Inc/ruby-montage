@@ -74,11 +74,9 @@ All API actions are available as methods on the client object. The following met
 
 | Action                              | Method                                              |
 | :------------------------------     | :-------------------------------------------------- |
-| Query documents in a schema         | `#documents(schema, query)`                         |
+| Query documents in a schema         | `#documents(schema, query: query)`                  |
 | Fetch a single document             | `#document(schema, document_uuid)`                  |
 | Fetch the next set of documents     | `#document_cursor(schema, cursor)`                  |
-| Create a new document               | `#create_document(schema, document)`                |
-| Update a document                   | `#update_document(schema, document_uuid, document)` |
 | Delete a document                   | `#delete_document(schema, document_uuid)`           |
 | Create or update a set of documents | `#create_or_update_documents(schema,documents)`     |
 
@@ -108,7 +106,7 @@ The Montage API requires a JSON serialized query object to query a schema
       "limit": 10,
       "offset": 10,
       "order_by": "foo",
-      "direction": "asc",
+      "ordering": "asc",
       "filter": {
         ...
       }
@@ -124,7 +122,7 @@ query = query.where("foo > 5").limit(10).order(foo: :asc)
 This query object can now be passed into an API call to documents to retrieve a set of documents:
 
 ```ruby
-c.documents("movies", query)
+c.documents("movies", query: query)
 ```
 
 Using this query object is not required in order to complete a request. Any object that responds to `.to_json` and
