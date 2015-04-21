@@ -87,8 +87,6 @@ module Montage
     # Returns a copy of self
     #
     def where(clause)
-      @query[:filter].merge!(QueryParser.new(clause).parse)
-      self
       clone.tap { |r| r.query[:filter].merge!(QueryParser.new(clause).parse) }
     end
 
