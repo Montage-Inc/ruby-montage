@@ -23,14 +23,14 @@ Gem::Specification.new do |spec|
     spec.metadata['allowed_push_host'] = "https://repo.fury.io/EwA3oy8vsnG-bzdB4KPT/me/"
   end
 
-  spec.add_development_dependency "bundler", "~> 1.8"
-  spec.add_development_dependency "rake", "~> 10.0"
-  spec.add_development_dependency "shoulda-context", "~> 1.0"
-  spec.add_development_dependency "mocha", "~> 1.1"
-  spec.add_development_dependency "simplecov", "~> 0.9.1"
-  spec.add_development_dependency "coveralls"
-  spec.add_development_dependency "minitest", "~> 5.5.0"
-  spec.add_development_dependency "minitest-reporters"
+  spec.add_development_dependency "bundler",           "~> 1.8"
+  spec.add_development_dependency "rake",              "~> 10.0"
+  spec.add_development_dependency "shoulda-context",   "~> 1.0"
+  spec.add_development_dependency "mocha",             "~> 1.1"
+  spec.add_development_dependency "simplecov",         "~> 0.9.1"
+  spec.add_development_dependency "coveralls",         "~> 0"
+  spec.add_development_dependency "minitest",          "~> 5.5.0", '>= 5.5.0'
+  spec.add_development_dependency "minitest-reporters","~> 0"
 
   spec.add_dependency "faraday", "~> 0.9"
   spec.add_dependency "faraday_middleware", "~> 0.9"
