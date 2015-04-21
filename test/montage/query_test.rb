@@ -93,7 +93,7 @@ class Montage::QueryTest < Minitest::Test
   context "#order" do
     setup do
       @query = Montage::Query.new
-      @expected = { filter: {}, order: "foobar asc" }
+      @expected = { filter: {}, order_by: "foobar",ordering: "asc" }
     end
 
     should "append the order attribute to the query body" do
@@ -104,8 +104,8 @@ class Montage::QueryTest < Minitest::Test
       assert_equal @expected, @query.order("foobar").query
     end
 
-    should "set the default to nil" do
-      assert_equal({ filter: {}, order: nil }, @query.order.query)
+    should "set the order to empty" do
+      assert_equal({ filter: {}, order_by: "",ordering: "" }, @query.order.query)
     end
 
     should "accept and properly parse a hash" do
@@ -135,7 +135,7 @@ class Montage::QueryTest < Minitest::Test
     end
 
     should "parse the query to a json format" do
-      assert_equal "{\"filter\":{\"foo\":1,\"bar__gt\":2},\"order\":\"created_at desc\",\"limit\":10}", @query.where(foo: 1).where("bar > 2").order(created_at: :desc).limit(10).to_json
+      assert_equal "{\"filter\":{\"foo\":1,\"bar__gt\":2},\"order_by\":\"created_at\",\"ordering\":\"desc\",\"limit\":10}", @query.where(foo: 1).where("bar > 2").order(created_at: :desc).limit(10).to_json
     end
   end
 end
