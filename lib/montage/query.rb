@@ -1,9 +1,12 @@
 require 'montage/errors'
 require 'montage/query_parser'
+require 'montage/support'
 require 'json'
 
 module Montage
   class Query
+    include Montage::Support
+
     attr_accessor :query
 
     def initialize
@@ -15,11 +18,10 @@ module Montage
     # Merges a hash:
     #  { limit: 10 }
     #
-    # Returns a reference to self
+    # Returns self
     #
     def limit(max = nil)
-      @query.merge!(limit: max)
-      self
+      clone.tap { |r| r.query.merge!(limit: max) }
     end
 
     # Defines the offset to apply to the query, defaults to nil
@@ -27,33 +29,10 @@ module Montage
     # Merges a hash:
     #   { offset: 10 }
     #
-    # Returns a reference to self
+    # Returns a copy of self
     #
     def offset(value = nil)
-      @query.merge!(offset: value)
-      self
-    end
-
-    # Will take either an empty string or zero and turn it into a nil object
-    # If the value passed in is neither zero or an empty string, will return the value
-    #
-    def nillify(value)
-      return value unless ["", 0].include?(value)
-      nil
-    end
-
-    # Determines if the string value passed in is an integer
-    # Returns true or false
-    #
-    def is_i?(value)
-      /\A\d+\z/ === value
-    end
-
-    # Determines if the string value passed in is a float
-    # Returns true or false
-    #
-    def is_f?(value)
-      /\A\d+\.\d+\z/ === value
+      clone.tap { |r| r.query.merge!(offset: value) }
     end
 
     # Defines the order clause for the query and merges it into the query hash
@@ -68,7 +47,7 @@ module Montage
     # Merges a hash:
     #   { order: "foo asc" }
     #
-    # Returns a reference to self
+    # Returns a copy of self
     #
     def order(clause = {})
       if clause.is_a?(Hash)
@@ -80,8 +59,7 @@ module Montage
         direction = "asc" unless %w(asc desc).include?(direction)
       end
 
-      @query.merge!(order_by: field, ordering: direction)
-      self
+      clone.tap{ |r| r.query.merge!(order_by: field, ordering: direction) }
     end
 
     # Parses the SQL string passed into the method
@@ -106,11 +84,12 @@ module Montage
     # Merges a hash:
     #   { foo: 1 }
     #
-    # Returns a reference to self
+    # Returns a copy of self
     #
     def where(clause)
       @query[:filter].merge!(QueryParser.new(clause).parse)
       self
+      clone.tap { |r| r.query[:filter].merge!(QueryParser.new(clause).parse) }
     end
 
     # Parses the current query hash and returns a JSON string
