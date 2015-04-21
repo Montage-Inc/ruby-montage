@@ -63,11 +63,6 @@ module Montage
         end
       end
 
-      if @clause.include?(': [')
-        split = @clause.split(': ')
-        return {"#{split[0]}__in".to_sym => to_array(split[1])}
-      end
-
       raise QueryError, "Your query has an undetermined error" unless column_name
       raise QueryError, "The operator you have used is not a valid Montage query operator" unless query_operator
 
