@@ -9,7 +9,6 @@ module Montage
 
     def attribute_keys
       return items.keys.map(&:to_sym) if items.is_a?(Hash)
-      []
     end
 
     def self.resource_name
@@ -22,7 +21,7 @@ module Montage
 
     def parse_items
       {}.tap do |hsh|
-        attributes.each do |key, value|
+        @attributes.each do |key, value|
           if key == "_meta"
             hsh["created_at"] = value["created"]
             hsh["updated_at"] = value["modified"]

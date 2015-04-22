@@ -58,6 +58,11 @@ class Montage::ReponseTest < Minitest::Test
       subject = Montage::Response.new(500, {})
       assert !subject.success?
     end
+
+    should "not respond to" do
+      subject = Montage::Response.new(404, {})
+      assert !subject.respond_to?('error')
+    end
   end
 
   context "#members" do
