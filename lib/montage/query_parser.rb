@@ -55,11 +55,11 @@ module Montage
     # Parse the clause into a Montage query
     #
     def parse
-      if @clause.is_a?(Hash)
+      if clause.is_a?(Hash)
         if clause.values.first.is_a?(Array)
-          return {"#{clause.keys.first}__in".to_sym => @clause.values.first}
+          return {"#{clause.keys.first}__in".to_sym => clause.values.first}
         else
-          return @clause
+          return clause
         end
       end
 

@@ -38,7 +38,7 @@ class Montage::QueryParserTest < Minitest::Test
     should "properly parse a <= query" do
       assert_equal({ foo__lte: "bar" }, Montage::QueryParser.new("foo <= 'bar'").parse)
     end
-    
+
     should "properly parse an IN query using array syntax" do
       assert_equal({ foo__in: ["bar","barb","barber"] }, Montage::QueryParser.new({foo: ['bar','barb','barber']}).parse)
     end
