@@ -20,15 +20,19 @@ module Montage
     end
 
     def parse_items
-      {}.tap do |hsh|
-        @attributes.each do |key, value|
-          if key == "_meta"
-            hsh["created_at"] = value["created"]
-            hsh["updated_at"] = value["modified"]
-          else
-            hsh[key] = value
+      if attributes.is_a?(Hash)
+        {}.tap do |hsh|
+          attributes.each do |key, value|
+            if key == "_meta"
+              hsh["created_at"] = value["created"]
+              hsh["updated_at"] = value["modified"]
+            else
+              hsh[key] = value
+            end
           end
         end
+      else
+        attributes
       end
     end
 
