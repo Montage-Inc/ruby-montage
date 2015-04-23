@@ -69,6 +69,16 @@ class Montage::QueryTest < Minitest::Test
 
       assert_equal expected, @query.where("foo <= 1").query
     end
+    should "work with AND operator" do
+      expected = {
+        filter: {
+          foo__lt: 5.0,
+          foo__gt: 3.0
+        }
+      }
+
+      assert_equal expected, @query.where("foo < 5 AND foo > 3").query
+    end
   end
 
   context "#to_json" do
