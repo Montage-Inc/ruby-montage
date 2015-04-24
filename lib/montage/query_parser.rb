@@ -1,21 +1,24 @@
 require 'montage/errors'
+require 'montage/support'
 require 'json'
 
 module Montage
   class QueryParser
-    attr_reader :clause
+    include Montage::Support
+
+    attr_reader :query
 
     OPERATOR_MAP = {
-      " != "     => "__not",
-      " >= "     => "__gte",
-      " <= "     => "__lte",
-      " = "      => "",
-      " > "      => "__gt",
-      " < "      => "__lt",
-      " not in " => "__notin",
-      " in "     => "__in",
-      " like "   => "__contains",
-      " ilike "  => "__icontains"
+      "!="     => "__not",
+      ">="     => "__gte",
+      "<="     => "__lte",
+      "="      => "",
+      ">"      => "__gt",
+      "<"      => "__lt",
+      "not in" => "__notin",
+      "in"     => "__in",
+      "ilike"  => "__icontains",
+      "like"   => "__contains"
     }
 
     TYPE_MAP = {
@@ -24,74 +27,88 @@ module Montage
       is_s?: :to_s
     }
 
-    def initialize(clause)
-      @clause = clause
+    def initialize(query)
+      @query = query
     end
 
-    def column_name
-      @column_name ||= @clause.downcase.split(' ')[0]
+    # Parse the column name from the specific query part
+    #
+    def get_column_name(part, splitter = " ")
+      part.downcase.split(splitter)[0].strip
     end
 
-    def query_operator
-      @query_operator ||= OPERATOR_MAP.find(Proc.new { [nil, nil] }) { |key, value| @clause.downcase.include?(key) }[1]
-      if @clause.downcase.include?(' and ')
-        @query_operator = 'AND'
-      end
-      @query_operator
+    # Grabs the proper query operator from the string
+    #
+    def get_query_operator(part)
+      OPERATOR_MAP.find(Proc.new { [nil, nil] }) { |key, value| part.include?(key) }
     end
 
-    def condition_set
-      @condition_set ||= @clause.split(/\s(?=(?:[^']|'[^']*')*$)/)[-1]
+    # Extract the condition set from the given clause
+    #
+    def parse_condition_set(clause, splitter = " ")
+      clause.split(splitter)[-1].strip
     end
 
-    def parse_query_value
-      if is_i?(condition_set)
-        condition_set.to_i
-      elsif is_f?(condition_set)
-        condition_set.to_f
-      elsif query_operator == '__notin' || query_operator == '__in'
-        to_array(condition_set)
+    # Parse a single portion of the query string
+    #
+    def parse_part(part)
+      if is_i?(part)
+        part.to_i
+      elsif is_f?(part)
+        part.to_f
+      elsif part =~ /\(.*\)/
+        to_array(part)
       else
-        condition_set.gsub(/('|\(|\))/, "")
+        part.gsub(/('|')/, "")
       end
+    end
+
+    # Get all the parts of the query string
+    #
+    def get_parts(str)
+      operator, montage_operator = get_query_operator(str)
+
+      raise QueryError, "The operator you have used is not a valid Montage query operator" unless montage_operator
+
+      column_name = get_column_name(str, operator)
+
+      raise QueryError, "Your query has an undetermined error" unless column_name
+
+      value = parse_part(parse_condition_set(str, operator))
+
+      [column_name, montage_operator, value]
+    end
+
+    # Parse a hash type query
+    #
+    def parse_hash(hsh)
+      Hash[
+        hsh.map do |key, value|
+          new_key = value.is_a?(Array) ? "#{key}__in".to_sym : key
+          [new_key, value]
+        end
+      ]
+    end
+
+    # Parse a string type query
+    #
+    def parse_string(str)
+      Hash[
+        str.downcase.split("and").map do |part|
+          column_name, operator, value = get_parts(part)
+          ["#{column_name}#{operator}".to_sym, value]
+        end
+      ]
     end
 
     # Parse the clause into a Montage query
     #
     def parse
-      if clause.is_a?(Hash)
-        if clause.values.first.is_a?(Array)
-          return {"#{clause.keys.first}__in".to_sym => clause.values.first}
-        else
-          return clause
-        end
-      end
-
-      raise QueryError, "Your query has an undetermined error" unless column_name
-      raise QueryError, "The operator you have used is not a valid Montage query operator" unless query_operator
-
-      if(query_operator == 'AND')
-        split = @clause.split(' AND ')
-
-        argument = QueryParser.new(split[0]).parse
-        argument.merge(QueryParser.new(split[1]).parse)
+      if query.is_a?(Hash)
+        parse_hash(query)
       else
-        { "#{@column_name}#{query_operator}".to_sym => parse_query_value }
+        parse_string(query)
       end
-    end
-
-    # Determines if the string value passed in is an integer
-    # Returns true or false
-    #
-    def is_i?(value)
-      /\A\d+\z/ === value
-    end
-
-    # Determines if the string value passed in is a float
-    # Returns true or false
-    #
-    def is_f?(value)
-      /\A\d+\.\d+\z/ === value
     end
 
     # Takes a string value and splits it into an array

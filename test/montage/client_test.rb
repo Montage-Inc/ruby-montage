@@ -79,15 +79,16 @@ class Montage::ClientTest < Minitest::Test
     end
 
     should "set the token if the response was a success" do
+      @client.expects(:set_token).with("foonizzle")
+
       @client.build_response("token") do
         Faraday::Response.new(body: @success_body, status: 200)
       end
-
-      assert_equal "foonizzle", @client.token
-      assert_equal "Token foonizzle", @client.connection.headers["Authorization"]
     end
 
     should "skip setting the token if the response was not a success" do
+      @client.expects(:set_token).never
+
       @client.build_response("token") do
         Faraday::Response.new(body: {}, status: 404)
       end
@@ -96,18 +97,75 @@ class Montage::ClientTest < Minitest::Test
     end
   end
 
-  context "on request" do
-    setup do 
-      @stubs = Faraday::Adapter::Test::Stubs.new
-
-      @connection = Faraday.new do |builder|
-        builder.adapter :test, @stubs
+  context "#set_token" do
+    setup do
+      @client = Montage::Client.new do |c|
+        c.username = "foo"
+        c.password = "bar"
+        c.domain = "foobar"
       end
     end
 
-    should "get response from get method" do
-      @stubs.get "test/test" do
-        [@response_status, {}, @response_body]
+    should "set the token and update the headers" do
+      @client.set_token("foonizzle")
+
+      assert_equal "foonizzle", @client.token
+      assert_equal "Token foonizzle", @client.connection.headers["Authorization"]
+    end
+  end
+
+  context "#build_response" do
+    setup do
+      @client = Montage::Client.new do |c|
+        c.username = "foo"
+        c.password = "bar"
+        c.domain = "foobar"
+      end
+    end
+
+    context "when the server returns a 500" do
+      setup do
+        @response = Faraday::Response.new
+        @response.stubs(:body).returns("foonizzle")
+        @response.stubs(:status).returns(500)
+      end
+
+      should "create an error resource in the response object" do
+        resp = @client.build_response("documents") do
+          @response
+        end
+
+        assert resp.members.is_a?(Montage::Error)
+      end
+    end
+
+    context "when the server returns a 200 with errors" do
+      setup do
+        @response = Faraday::Response.new
+        @response.stubs(:body).returns({
+          "errors" =>
+            [{
+              "document"=>
+                { "id"=>"0838d9f9-5cd9-40dd-94e9-5f780cd97df7",
+                  "title"=>"The Son of Jaws Returns II: Jaws Harder",
+                  "rank"=>0,
+                  "rating"=>0,
+                  "votes"=>0,
+                  "_meta"=>{"created"=>"2015-04-18T19:21:44.989Z", "modified"=>"2015-04-18T19:21:44.989Z"},
+                  "year"=>"foo"
+                },
+              "errors"=>{"year"=>["Enter a number."]}
+            }]
+        })
+        @response.stubs(:status).returns(200)
+      end
+
+      should "create an error resource in the response object" do
+        resp = @client.build_response("documents") do
+          @response
+        end
+
+        assert resp.members.is_a?(Montage::Errors)
       end
     end
   end

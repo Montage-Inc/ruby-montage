@@ -15,14 +15,14 @@ module Montage
 
     def get_body(body)
       if body.is_a?(Hash)
-        body["data"] || body || {}
+        body["data"] || body["errors"] || body || {}
       else
         body || []
       end
     end
 
     def success?
-      if raw_body['errors']
+      if raw_body["errors"]
         return false
       else
         (200..299).include?(status)
@@ -30,11 +30,11 @@ module Montage
     end
 
     def respond_to?(method_name, include_private = false)
-      resource_name.to_sym == method_name || "#{resource_name}s".to_sym == method_name || method_name == 'errors'.to_sym || super
+      resource_name.to_sym == method_name || "#{resource_name}s".to_sym == method_name || method_name == "errors".to_sym || super
     end
 
     def method_missing(method_name, *args, &block)
-      return super unless resource_name.to_sym == method_name || "#{resource_name}s".to_sym == method_name || method_name == 'errors'.to_sym
+      return super unless resource_name.to_sym == method_name || "#{resource_name}s".to_sym == method_name || method_name == "errors".to_sym
       members
     end
 
