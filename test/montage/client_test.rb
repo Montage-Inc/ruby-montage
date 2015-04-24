@@ -95,4 +95,20 @@ class Montage::ClientTest < Minitest::Test
       assert_nil @client.token
     end
   end
+
+  context "on request" do
+    setup do 
+      @stubs = Faraday::Adapter::Test::Stubs.new
+
+      @connection = Faraday.new do |builder|
+        builder.adapter :test, @stubs
+      end
+    end
+
+    should "get response from get method" do
+      @stubs.get "test/test" do
+        [@response_status, {}, @response_body]
+      end
+    end
+  end
 end

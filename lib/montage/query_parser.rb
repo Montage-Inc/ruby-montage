@@ -34,6 +34,10 @@ module Montage
 
     def query_operator
       @query_operator ||= OPERATOR_MAP.find(Proc.new { [nil, nil] }) { |key, value| @clause.downcase.include?(key) }[1]
+      if @clause.downcase.include?(' and ')
+        @query_operator = 'AND'
+      end
+      @query_operator
     end
 
     def condition_set
@@ -66,7 +70,14 @@ module Montage
       raise QueryError, "Your query has an undetermined error" unless column_name
       raise QueryError, "The operator you have used is not a valid Montage query operator" unless query_operator
 
-      { "#{@column_name}#{query_operator}".to_sym => parse_query_value }
+      if(query_operator == 'AND')
+        split = @clause.split(' AND ')
+
+        argument = QueryParser.new(split[0]).parse
+        argument.merge(QueryParser.new(split[1]).parse)
+      else
+        { "#{@column_name}#{query_operator}".to_sym => parse_query_value }
+      end
     end
 
     # Determines if the string value passed in is an integer
