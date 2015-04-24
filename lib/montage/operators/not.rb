@@ -1,8 +1,6 @@
-require 'montage/operators'
-
 module Montage
   module Operators
-    class Not < Collection
+    class Not
       def self.operator
         "!="
       end

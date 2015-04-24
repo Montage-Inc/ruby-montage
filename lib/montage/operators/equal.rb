@@ -1,8 +1,6 @@
-require 'montage/operators'
-
 module Montage
   module Operators
-    class Equals < Collection
+    class Equals
       def self.operator
         "="
       end

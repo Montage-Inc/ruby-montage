@@ -1,12 +1,12 @@
 module Montage
   module Operators
-    class Lte
+    class Lt
       def self.operator
-        "<="
+        "<"
       end
 
       def self.montage_operator
-        "__lte"
+        "__lt"
       end
 
       def self.==(value)

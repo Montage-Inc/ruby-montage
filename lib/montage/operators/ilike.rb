@@ -1,12 +1,12 @@
 module Montage
   module Operators
-    class Lte
+    class Ilike
       def self.operator
-        "<="
+        "ilike"
       end
 
       def self.montage_operator
-        "__lte"
+        "__icontains"
       end
 
       def self.==(value)

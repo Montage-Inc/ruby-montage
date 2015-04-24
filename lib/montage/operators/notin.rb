@@ -1,12 +1,12 @@
 module Montage
   module Operators
-    class Lte
+    class Notin
       def self.operator
-        "<="
+        "not in"
       end
 
       def self.montage_operator
-        "__lte"
+        "__notin"
       end
 
       def self.==(value)
