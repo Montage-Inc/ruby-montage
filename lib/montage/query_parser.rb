@@ -71,7 +71,10 @@ module Montage
       raise QueryError, "The operator you have used is not a valid Montage query operator" unless query_operator
 
       if(query_operator == 'AND')
-        {"#{@column_name}__getthis".to_sym => 'split in two and parse',"#{@column_name}__getthistoo".to_sym => 'split query in two'}
+        split = @clause.split(' AND ')
+
+        argument = QueryParser.new(split[0]).parse
+        argument.merge(QueryParser.new(split[1]).parse)
       else
         { "#{@column_name}#{query_operator}".to_sym => parse_query_value }
       end
