@@ -2,7 +2,7 @@ module Montage
   module Operators
     class In
       def self.operator
-        " in "
+        "in"
       end
 
       def self.montage_operator
@@ -10,7 +10,7 @@ module Montage
       end
 
       def self.==(value)
-
+        value =~ /in/i && !value.downcase.include?("not")
       end
     end
   end

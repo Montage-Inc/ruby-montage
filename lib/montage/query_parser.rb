@@ -9,19 +9,6 @@ module Montage
 
     attr_reader :query
 
-    OPERATOR_MAP = {
-      "!="     => "__not",
-      ">="     => "__gte",
-      "<="     => "__lte",
-      "="      => "",
-      ">"      => "__gt",
-      "<"      => "__lt",
-      "not in" => "__notin",
-      "in"     => "__in",
-      "ilike"  => "__icontains",
-      "like"   => "__contains"
-    }
-
     TYPE_MAP = {
       is_i?: :to_i,
       is_f?: :to_f,
@@ -41,8 +28,8 @@ module Montage
     # Grabs the proper query operator from the string
     #
     def get_query_operator(part)
-      puts Montage::Operators.find_class(part)
-      OPERATOR_MAP.find(Proc.new { [nil, nil] }) { |key, value| part.include?(key) }
+      operator = Montage::Operators.find_operator(part)
+      [operator.operator, operator.montage_operator]
     end
 
     # Extract the condition set from the given clause
@@ -83,9 +70,9 @@ module Montage
 
     # Parse a hash type query
     #
-    def parse_hash(hsh)
+    def parse_hash
       Hash[
-        hsh.map do |key, value|
+        query.map do |key, value|
           new_key = value.is_a?(Array) ? "#{key}__in".to_sym : key
           [new_key, value]
         end
@@ -94,9 +81,9 @@ module Montage
 
     # Parse a string type query
     #
-    def parse_string(str)
+    def parse_string
       Hash[
-        str.downcase.split("and").map do |part|
+        query.downcase.split("and").map do |part|
           column_name, operator, value = get_parts(part)
           ["#{column_name}#{operator}".to_sym, value]
         end
@@ -107,9 +94,9 @@ module Montage
     #
     def parse
       if query.is_a?(Hash)
-        parse_hash(query)
+        parse_hash
       else
-        parse_string(query)
+        parse_string
       end
     end
 

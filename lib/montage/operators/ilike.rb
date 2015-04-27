@@ -2,7 +2,7 @@ module Montage
   module Operators
     class Ilike
       def self.operator
-        " ilike "
+        "ilike"
       end
 
       def self.montage_operator
@@ -10,7 +10,7 @@ module Montage
       end
 
       def self.==(value)
-
+        value =~ /\bilike\b/i
       end
     end
   end

@@ -88,26 +88,66 @@ class Montage::QueryParserTest < Minitest::Test
   end
 
   context "#parse_hash" do
-    setup do
-      @parser = Montage::QueryParser.new("foo")
+    context "with a single argument" do
+      setup do
+        @parser = Montage::QueryParser.new({foo: "bar"})
+      end
+
+      should "properly parse the query" do
+        assert_equal({foo:"bar"}, @parser.parse_hash)
+      end
     end
 
-    should "properly parse hashes" do
-      assert_equal({foo:"bar"}, @parser.parse_hash(foo: "bar"))
-      assert_equal({foo:"bar", bar__in: [1,2,3]}, @parser.parse_hash(foo: "bar", bar: [1,2,3]))
-      assert_equal({foo:42, bar__in: [1,2,3], foobar:50}, @parser.parse_hash(foo:42, bar: [1,2,3], foobar:50))
+    context "with two arguments" do
+      setup do
+        @parser = Montage::QueryParser.new(foo: "bar", bar: [1,2,3])
+      end
+
+      should "properly parse the query" do
+        assert_equal({foo:"bar", bar__in: [1,2,3]}, @parser.parse_hash)
+      end
+    end
+
+    context "with multiple arguments" do
+      setup do
+        @parser = Montage::QueryParser.new(foo:42, bar: [1,2,3], foobar:50)
+      end
+
+      should "peoperly parse the query" do
+        assert_equal({foo:42, bar__in: [1,2,3], foobar:50}, @parser.parse_hash)
+      end
     end
   end
 
   context "#parse_string" do
-    setup do
-      @parser = Montage::QueryParser.new("foo")
+    context "with a basic query" do
+      setup do
+        @parser = Montage::QueryParser.new("foo = 'bar'")
+      end
+
+      should "properly parse the query" do
+        assert_equal({foo:"bar"}, @parser.parse_string)
+      end
     end
 
-    should "properly parse strings" do
-      assert_equal({foo:"bar"}, @parser.parse_string("foo = 'bar'"))
-      assert_equal({foo:"bar", bar:"foo"}, @parser.parse_string("foo = 'bar' AND bar = 'foo'"))
-      assert_equal({foo:"bar", bar:"foo", foobar__lt: 50}, @parser.parse_string("foo='bar' and bar='foo' and foobar < 50"))
+    context "with an and statement" do
+      setup do
+        @parser = Montage::QueryParser.new("foo = 'bar' AND bar = 'foo'")
+      end
+
+      should "properly parse the query" do
+        assert_equal({foo:"bar", bar:"foo"}, @parser.parse_string)
+      end
+    end
+
+    context "with multiple and statements" do
+      setup do
+        @parser = Montage::QueryParser.new("foo='bar' and bar='foo' and foobar < 50")
+      end
+
+      should "properly parse the query" do
+        assert_equal({foo:"bar", bar:"foo", foobar__lt: 50}, @parser.parse_string)
+      end
     end
   end
 

@@ -2,7 +2,7 @@ module Montage
   module Operators
     class Like
       def self.operator
-        " like "
+        "like"
       end
 
       def self.montage_operator
@@ -10,7 +10,7 @@ module Montage
       end
 
       def self.==(value)
-
+        value =~ /like/i && !value.downcase.include?("ilike")
       end
     end
   end

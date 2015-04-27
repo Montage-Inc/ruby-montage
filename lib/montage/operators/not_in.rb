@@ -1,8 +1,8 @@
 module Montage
   module Operators
-    class Notin
+    class NotIn
       def self.operator
-        " not in "
+        "not in"
       end
 
       def self.montage_operator
@@ -10,7 +10,7 @@ module Montage
       end
 
       def self.==(value)
-
+        value =~ /not in/i
       end
     end
   end

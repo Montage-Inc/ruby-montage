@@ -1,16 +1,16 @@
 module Montage
   module Operators
-    class Gt
+    class Nil
       def self.operator
-        ">"
+        nil
       end
 
       def self.montage_operator
-        "__gt"
+        nil
       end
 
       def self.==(value)
-        value =~ /[^=<]>[^=<]/
+
       end
     end
   end
