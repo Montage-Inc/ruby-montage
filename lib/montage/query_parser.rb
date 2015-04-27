@@ -1,6 +1,7 @@
 require 'montage/errors'
 require 'montage/support'
 require 'json'
+require 'montage/operators'
 
 module Montage
   class QueryParser
@@ -40,6 +41,7 @@ module Montage
     # Grabs the proper query operator from the string
     #
     def get_query_operator(part)
+      puts Montage::Operators.find_class(part)
       OPERATOR_MAP.find(Proc.new { [nil, nil] }) { |key, value| part.include?(key) }
     end
 

@@ -1,4 +1,4 @@
-require 'montage/operators/equals'
+require 'montage/operators/equal'
 require 'montage/operators/not'
 require 'montage/operators/notin'
 require 'montage/operators/lte'
@@ -13,7 +13,7 @@ module Montage
   module Operators
     def self.classes
       [
-        Montage::Operators::Equals,
+        Montage::Operators::Equal,
         Montage::Operators::Not,
         Montage::Operators::Lte,
         Montage::Operators::Gte,
@@ -27,7 +27,7 @@ module Montage
     end
 
     def self.find_class(name)
-      self.classes.find(Proc.new { Montage::Operator }) { |o| o.operator == name }
+      self.classes.find(Proc.new { Montage::Operators }) { |o| name.include?(o.operator) }
     end
   end
 end

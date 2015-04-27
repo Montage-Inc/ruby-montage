@@ -1,6 +1,6 @@
 module Montage
   module Operators
-    class Equals
+    class Equal
       def self.operator
         " = "
       end
