@@ -15,8 +15,7 @@ module Montage
     end
 
     def self.find_class(name)
-      matches = self.classes.select { |c| c.collection_name == name }
-      matches.first || Montage::Collection
+      self.classes.find(Proc.new { Montage::Collection }) { |c| c.collection_name == name }
     end
   end
 end

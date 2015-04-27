@@ -2,19 +2,156 @@ require File.dirname(__FILE__) + '/../minitest_helper.rb'
 require 'montage/query_parser'
 
 class Montage::QueryParserTest < Minitest::Test
-  context "#parse_string_clause" do
+  context "#get_column_name" do
+    setup do
+      @parser = Montage::QueryParser.new("foo")
+    end
+
+    should "get the column name from the string" do
+      assert_equal "foo", @parser.get_column_name("foo = bar")
+    end
+
+    should "be able to parse a query string with no spaces in it" do
+      assert_equal "foo", @parser.get_column_name("foo='bar'", "=")
+    end
+  end
+
+  context "#get_query_operator" do
+    setup do
+      @parser = Montage::QueryParser.new("foo")
+    end
+
+    should "return the proper operator if found" do
+      assert_equal ["!=", "__not"], @parser.get_query_operator("foo != 'bar'")
+    end
+
+    should "return nil if the proper operator cannot be found" do
+      assert_equal [nil, nil], @parser.get_query_operator("foo fob 'bar'")
+    end
+
+    should "be able to grab the operator from a string with no spaces" do
+      assert_equal ["!=", "__not"], @parser.get_query_operator("foo!='bar'")
+    end
+
+    should "get the ilike operator properly" do
+      assert_equal ["ilike", "__icontains"], @parser.get_query_operator("foo ilike 'bar'")
+    end
+  end
+
+  context "#parse_condition_set" do
+    setup do
+      @parser = Montage::QueryParser.new("foo")
+    end
+
+    should "return the condition set" do
+      assert_equal "'foo'", @parser.parse_condition_set("bar = 'foo'")
+      assert_equal "42", @parser.parse_condition_set("foo = 42")
+      assert_equal "(1,2,3)", @parser.parse_condition_set("foo IN (1,2,3)")
+      assert_equal "('a','b','c')", @parser.parse_condition_set("foo IN ('a','b','c')")
+    end
+  end
+
+  context "#parse_part" do
+    setup do
+      @parser = Montage::QueryParser.new("foo")
+    end
+
+    should "properly parse the part" do
+      assert_equal 42, @parser.parse_part("42")
+      assert_equal 1.2, @parser.parse_part("1.2")
+      assert_equal [1,2,3], @parser.parse_part("(1,2,3)")
+      assert_equal "foo", @parser.parse_part("foo")
+    end
+  end
+
+  context "#get_parts" do
+    setup do
+      @parser = Montage::QueryParser.new("foo")
+    end
+
+    should "properly get all the parts" do
+      assert_equal ["foo", "", "bar"], @parser.get_parts("foo = 'bar'")
+      assert_equal ["foo", "__not", "bar"], @parser.get_parts("foo!=bar")
+    end
+
     should "raise an exception if the query string doesn't have the right number of values" do
       assert_raises(Montage::QueryError, "Your query has an undetermined error") do
-        Montage::QueryParser.new('foo').parse
+        Montage::QueryParser.new('').get_parts('')
       end
     end
 
     should "raise an exception if none of the operators match" do
       assert_raises(Montage::QueryError, "The operator you have used is not a valid Montage query operator") do
-        Montage::QueryParser.new("foo <>< 'bar'").parse
+        Montage::QueryParser.new("foo <>< 'bar'").get_parts("foo sdjfk 'bar'")
+      end
+    end
+  end
+
+  context "#parse_hash" do
+    context "with a single argument" do
+      setup do
+        @parser = Montage::QueryParser.new({foo: "bar"})
+      end
+
+      should "properly parse the query" do
+        assert_equal({foo:"bar"}, @parser.parse_hash)
       end
     end
 
+    context "with two arguments" do
+      setup do
+        @parser = Montage::QueryParser.new(foo: "bar", bar: [1,2,3])
+      end
+
+      should "properly parse the query" do
+        assert_equal({foo:"bar", bar__in: [1,2,3]}, @parser.parse_hash)
+      end
+    end
+
+    context "with multiple arguments" do
+      setup do
+        @parser = Montage::QueryParser.new(foo:42, bar: [1,2,3], foobar:50)
+      end
+
+      should "peoperly parse the query" do
+        assert_equal({foo:42, bar__in: [1,2,3], foobar:50}, @parser.parse_hash)
+      end
+    end
+  end
+
+  context "#parse_string" do
+    context "with a basic query" do
+      setup do
+        @parser = Montage::QueryParser.new("foo = 'bar'")
+      end
+
+      should "properly parse the query" do
+        assert_equal({foo:"bar"}, @parser.parse_string)
+      end
+    end
+
+    context "with an and statement" do
+      setup do
+        @parser = Montage::QueryParser.new("foo = 'bar' AND bar = 'foo'")
+      end
+
+      should "properly parse the query" do
+        assert_equal({foo:"bar", bar:"foo"}, @parser.parse_string)
+      end
+    end
+
+    context "with multiple and statements" do
+      setup do
+        @parser = Montage::QueryParser.new("foo='bar' and bar='foo' and foobar < 50")
+      end
+
+      should "properly parse the query" do
+        assert_equal({foo:"bar", bar:"foo", foobar__lt: 50}, @parser.parse_string)
+      end
+    end
+  end
+
+  context "#parse" do
     should "properly parse an = query" do
       assert_equal({ foo: "foo bar" }, Montage::QueryParser.new("foo = 'foo bar'").parse)
     end
@@ -73,16 +210,6 @@ class Montage::QueryParserTest < Minitest::Test
 
     should "properly parse an ILIKE query" do
       assert_equal({ foo__icontains: "bar" }, Montage::QueryParser.new("foo ILIKE 'bar'").parse)
-    end
-  end
-
-  context "#query_operator" do
-    setup do
-      @parser = Montage::QueryParser
-    end
-
-    should "return the operator and its montage equivalent" do
-      assert_equal "__gte", @parser.new('test >= foo').query_operator
     end
   end
 
