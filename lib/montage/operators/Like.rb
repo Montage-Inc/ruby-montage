@@ -2,7 +2,7 @@ module Montage
   module Operators
     class Like
       def self.operator
-        "like"
+        " like "
       end
 
       def self.montage_operator

@@ -2,7 +2,7 @@ module Montage
   module Operators
     class In
       def self.operator
-        "in"
+        " in "
       end
 
       def self.montage_operator

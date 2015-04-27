@@ -2,7 +2,7 @@ module Montage
   module Operators
     class Equals
       def self.operator
-        "="
+        " = "
       end
 
       def self.montage_operator

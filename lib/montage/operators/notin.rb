@@ -2,7 +2,7 @@ module Montage
   module Operators
     class Notin
       def self.operator
-        "not in"
+        " not in "
       end
 
       def self.montage_operator

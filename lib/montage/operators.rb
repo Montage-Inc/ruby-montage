@@ -27,7 +27,7 @@ module Montage
     end
 
     def self.find_class(name)
-      self.classes.find(Proc.new { Montage::Operator }) { |c| c.collection_name == name }
+      self.classes.find(Proc.new { Montage::Operator }) { |o| o.operator == name }
     end
   end
 end
