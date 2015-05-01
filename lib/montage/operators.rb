@@ -6,7 +6,7 @@ require 'montage/operators/gte'
 require 'montage/operators/lt'
 require 'montage/operators/gt'
 require 'montage/operators/ilike'
-require 'montage/operators/Like'
+require 'montage/operators/like'
 require 'montage/operators/in'
 require 'montage/operators/nil'
 
