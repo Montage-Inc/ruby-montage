@@ -35,7 +35,7 @@ module Montage
     # Extract the condition set from the given clause
     #
     def parse_condition_set(clause, splitter = " ")
-      clause.split(splitter)[-1].strip
+      clause.split(/#{splitter}/i)[-1].strip
     end
 
     # Parse a single portion of the query string
@@ -83,7 +83,7 @@ module Montage
     #
     def parse_string
       Hash[
-        query.downcase.split("and").map do |part|
+        query.split(/and/i).map do |part|
           column_name, operator, value = get_parts(part)
           ["#{column_name}#{operator}".to_sym, value]
         end

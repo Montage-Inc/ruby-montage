@@ -153,7 +153,7 @@ class Montage::QueryParserTest < Minitest::Test
 
   context "#parse" do
     should "properly parse an = query" do
-      assert_equal({ foo: "foo bar" }, Montage::QueryParser.new("foo = 'foo bar'").parse)
+      assert_equal({ foo: "Foo Bar" }, Montage::QueryParser.new("foo = 'Foo Bar'").parse)
     end
 
     should "properly parse a != query" do
