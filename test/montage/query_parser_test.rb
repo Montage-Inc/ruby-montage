@@ -152,6 +152,10 @@ class Montage::QueryParserTest < Minitest::Test
   end
 
   context "#parse" do
+    should "properly parse a query that has the word and in the search string" do
+      assert_equal({foo: "Fruit and Nut"}, Montage::QueryParser.new("foo = 'Fruit and Nut'").parse)
+    end
+
     should "properly parse an = query" do
       assert_equal({ foo: "Foo Bar" }, Montage::QueryParser.new("foo = 'Foo Bar'").parse)
     end
