@@ -5,9 +5,6 @@ dependencies:
     - 'rvm-exec 2.1.5 bundle install'
     - 'rvm-exec 2.2.0 bundle install'
 
-  pre:
-    - gem install bundler -v 1.8
-
 test:
   override:
     - 'rvm-exec 1.9.3-p551 bundle exec rake'

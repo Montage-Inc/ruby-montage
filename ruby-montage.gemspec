@@ -23,7 +23,7 @@ Gem::Specification.new do |spec|
     spec.metadata['allowed_push_host'] = "https://1jB4bNjnEKjP4xyR8NNr@repo.fury.io/editllc/"
   end
 
-  spec.add_development_dependency "bundler",           "~> 1.8"
+  spec.add_development_dependency "bundler",           "~> 1.7"
   spec.add_development_dependency "rake",              "~> 10.0"
   spec.add_development_dependency "shoulda-context",   "~> 1.0"
   spec.add_development_dependency "mocha",             "~> 1.1"
