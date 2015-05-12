@@ -117,7 +117,7 @@ query = query.where("foo > 5").limit(10).order(foo: :asc)
 This query object can now be passed into an API call to documents to retrieve a set of documents:
 
 ```ruby
-c.documents("movies", query: query)
+c.documents("movies", query)
 ```
 
 Using this query object is not required in order to complete a request. Any object that responds to `.to_json` and

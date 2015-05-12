@@ -19,10 +19,6 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  if spec.respond_to?(:metadata)
-    spec.metadata['allowed_push_host'] = "https://1jB4bNjnEKjP4xyR8NNr@repo.fury.io/editllc/"
-  end
-
   spec.add_development_dependency "bundler",           "~> 1.7"
   spec.add_development_dependency "rake",              "~> 10.0"
   spec.add_development_dependency "shoulda-context",   "~> 1.0"
@@ -35,9 +31,4 @@ Gem::Specification.new do |spec|
   spec.add_dependency "faraday", "~> 0.9"
   spec.add_dependency "faraday_middleware", "~> 0.9"
   spec.add_dependency "json", "~> 1.8"
-
-
-  if spec.respond_to?(:metadata)
-    spec.metadata['allowed_push_host'] = "https://EwA3oy8vsnG-bzdB4KPT@repo.fury.io/app35692279_heroku_com/"
-  end
 end
