@@ -32,7 +32,7 @@ class Montage::Client::DocumentsTest < Montage::TestCase
 
     should "send the right request" do
       expected = Montage::Response.new(@response_status, @response_body, "document")
-      response = @client.documents("movies", query: @payload)
+      response = @client.documents("movies", @payload)
 
       assert_response_equal expected, response
       assert_equal Montage::Documents, response.members.class
