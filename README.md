@@ -1,3 +1,5 @@
+[![codecov.io](http://codecov.io/github/EditLLC/ruby-montage/coverage.svg?branch=master)](http://codecov.io/github/EditLLC/ruby-montage?branch=master)
+
 # Ruby Montage
 
 A Ruby wrapper for the [Montage](https://www.foo.com) API

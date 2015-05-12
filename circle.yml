@@ -1,0 +1,18 @@
+dependencies:
+  override:
+    - 'rvm-exec 1.9.0 bundle install'
+    - 'rvm-exec 2.0.0 bundle install'
+    - 'rvm-exec 2.1.0 bundle install'
+    - 'rvm-exec 2.2.0 bundle install'
+    - 'rvm-exec 2.2.1 bundle install'
+
+  pre:
+    - gem install bundler -v 1.8
+
+test:
+  override:
+    - 'rvm-exec 1.9.0 bundle exec rake'
+    - 'rvm-exec 2.0.0 bundle exec rake'
+    - 'rvm-exec 2.1.0 bundle exec rake'
+    - 'rvm-exec 2.2.0 bundle exec rake'
+    - 'rvm-exec 2.2.1 bundle exec rake'
