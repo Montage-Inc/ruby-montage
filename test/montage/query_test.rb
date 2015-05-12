@@ -69,6 +69,7 @@ class Montage::QueryTest < Minitest::Test
 
       assert_equal expected, @query.where("foo <= 1").query
     end
+
     should "work with AND operator" do
       expected = {
         filter: {
@@ -78,6 +79,18 @@ class Montage::QueryTest < Minitest::Test
       }
 
       assert_equal expected, @query.where("foo < 5 AND foo > 3").query
+    end
+  end
+
+  context "#index" do
+    setup do
+      @query = Montage::Query.new
+    end
+
+    should "append the index to the query body" do
+      expected = { filter: {}, index: "foo" }
+
+      assert_equal expected, @query.index("foo").query
     end
   end
 

@@ -90,6 +90,14 @@ module Montage
       clone.tap { |r| r.query[:filter].merge!(QueryParser.new(clause).parse) }
     end
 
+    # Specifies and index to use on a query. RethinkDB isn't as smart as some other
+    # database engines when selecting a query plan, but it does let you specify
+    # which index to use
+    #
+    def index(field)
+      clone.tap { |r| r.query.merge!(index: field) }
+    end
+
     # Parses the current query hash and returns a JSON string
     #
     def to_json

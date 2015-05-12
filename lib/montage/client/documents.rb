@@ -33,9 +33,9 @@ module Montage
       #
       # Returns a Montage::Response
       #
-      def document_cursor(schema, cursor)
-        get("schemas/#{schema}/?cursor=#{cursor}", "document")
-      end
+      # def document_cursor(schema, cursor)
+        # get("schemas/#{schema}/?cursor=#{cursor}", "document")
+      # end
 
       # Public: Create or update a set of documents
       #

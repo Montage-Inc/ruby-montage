@@ -27,6 +27,7 @@ class Montage::ClientTest < Minitest::Test
       end
       assert_equal 1, client.api_version
     end
+
     should "overwrite the api version" do
       client = Montage::Client.new do |config|
         config.username = "me@foobar.com"
@@ -90,7 +91,7 @@ class Montage::ClientTest < Minitest::Test
       @client.expects(:set_token).never
 
       @client.build_response("token") do
-        Faraday::Response.new(body: {}, status: 404)
+        Faraday::Response.new(body: { "errors" => [] }, status: 404)
       end
 
       assert_nil @client.token
@@ -126,7 +127,7 @@ class Montage::ClientTest < Minitest::Test
     context "when the server returns a 500" do
       setup do
         @response = Faraday::Response.new
-        @response.stubs(:body).returns("foonizzle")
+        @response.stubs(:body).returns({ "errors" => [] })
         @response.stubs(:status).returns(500)
       end
 
@@ -135,7 +136,7 @@ class Montage::ClientTest < Minitest::Test
           @response
         end
 
-        assert resp.members.is_a?(Montage::Error)
+        assert resp.members.is_a?(Montage::Errors)
       end
     end
 
