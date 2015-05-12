@@ -1,3 +1,4 @@
+[![Circle CI](https://circleci.com/gh/EditLLC/ruby-montage/tree/master.svg?style=svg)](https://circleci.com/gh/EditLLC/ruby-montage/tree/master)
 [![codecov.io](http://codecov.io/github/EditLLC/ruby-montage/coverage.svg?branch=master)](http://codecov.io/github/EditLLC/ruby-montage?branch=master)
 
 # Ruby Montage
