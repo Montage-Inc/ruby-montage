@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["dphaener"]
   spec.email         = ["dphaener@gmail.com"]
 
-  spec.summary       = %q{A Ruby wrapper for the Monatge REST API}
-  spec.description   = %q{A better description is coming...}
+  spec.summary       = %q{A Ruby wrapper for the Montage REST API}
+  spec.description   = %q{A Ruby wrapper for the Montage REST API}
   spec.homepage      = "https://github.com/EditLLC/ruby-montage"
   spec.license       = "MIT"
 
@@ -18,6 +18,8 @@ Gem::Specification.new do |spec|
   spec.bindir        = "exe"
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
+
+  spec.required_ruby_version = '>= 1.9.3'
 
   spec.add_development_dependency "bundler",           "~> 1.7"
   spec.add_development_dependency "rake",              "~> 10.0"
