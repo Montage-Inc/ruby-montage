@@ -9,7 +9,7 @@ module Montage
       #
       # Returns a Montage::Response
       #
-      def documents(schema, query: {})
+      def documents(schema, query = {})
         post("schemas/#{schema}/query/", "document", query)
       end
 
