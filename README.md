@@ -54,21 +54,12 @@ end
 
 All API actions are available as methods on the client object. The following methods are available:
 
-## Files
-
-| Action                          | Method                                              |
-| :------------------------------ | :-------------------------------------------------- |
-| Get a list of files             | `#files`                                            |
-| Get a single file               | `#file(file_id)`                                    |
-| Upload a new file               | `#new_file(file)`                                   |
-| Delete a file                   | `#destroy_file(file_id)`                            |
-
 ## Schemas
 
 | Action                          | Method                                              |
 | :------------------------------ | :-------------------------------------------------- |
 | Get a list of schemas           | `#schemas`                                          |
-| Fetch a single schema           | `#schemas(name)`                                    |
+| Fetch a single schema           | `#schema(name)`                                    |
 
 ## Documents
 
