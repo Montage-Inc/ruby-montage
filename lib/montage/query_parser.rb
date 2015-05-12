@@ -103,10 +103,9 @@ module Montage
     # Takes a string value and splits it into an array
     # Will coerce all values into the type of the first type
     #
-
     def to_array(value)
       values = value.gsub(/('|\(|\))/, "").split(',')
-      type = %i(is_i? is_f?).find(Proc.new { :is_s? }) { |t| send(t, values.first) }
+      type = [:is_i? :is_f?].find(Proc.new { :is_s? }) { |t| send(t, values.first) }
       values.map { |v| v.send(TYPE_MAP[type]) }
     end
   end
