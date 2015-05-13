@@ -14,7 +14,7 @@ module Montage
     end
 
     def get_body(body)
-      resource_name == "error" ? body["errors"] : body["data"]
+      resource_name == "error" ? body["errors"] : body["data"] || body
     end
 
     def success?

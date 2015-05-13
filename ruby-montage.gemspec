@@ -28,7 +28,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "simplecov",         "~> 0.9.1"
   spec.add_development_dependency "minitest",          "~> 5.5.0", ">= 5.5.0"
   spec.add_development_dependency "minitest-reporters","~> 1.0"
-  spec.add_development_dependency "codecov"
+  spec.add_development_dependency "codecov", "~> 0.0"
 
   spec.add_dependency "faraday", "~> 0.9"
   spec.add_dependency "faraday_middleware", "~> 0.9"

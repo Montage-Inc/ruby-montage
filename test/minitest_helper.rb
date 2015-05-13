@@ -1,8 +1,5 @@
 require 'simplecov'
 
-# To run tests with coverage:
-# COVERAGE=true rake test
-
 SimpleCov.start do
   if ENV['CI']=='true'
     require 'codecov'

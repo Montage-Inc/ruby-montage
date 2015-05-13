@@ -60,6 +60,11 @@ class Montage::ReponseTest < Minitest::Test
       @subject = Montage::Response.new(200, { "errors" => [{foo: "bar"}] }, "error")
       assert_equal([{foo: "bar"}], @subject.body)
     end
+
+    should "return the plain body if no data attribute is found" do
+      @subject = Montage::Response.new(200, { "fields" => {} }, "schema")
+      assert_equal({"fields" => {} }, @subject.body)
+    end
   end
 
   context "#members" do
