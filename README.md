@@ -4,7 +4,7 @@
 
 # Ruby Montage
 
-A Ruby wrapper for the [Montage](https://www.foo.com) API
+A Ruby wrapper for the [Montage](http://www.yourdatacandobetter.com) API
 
 ## Installation
 
@@ -127,7 +127,7 @@ returns an object that conforms to the above query standards will work. This is 
 
 ## Contributing
 
-1. Fork it ( https://github.com/[my-github-username]/ruby-montage/fork )
+1. Fork it ( https://github.com/EditLLC/ruby-montage/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
