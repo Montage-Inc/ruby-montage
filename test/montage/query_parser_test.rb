@@ -225,6 +225,10 @@ class Montage::QueryParserTest < Minitest::Test
     should "properly parse an includes query" do
       assert_equal({ foo__includes: ["foo"]}, Montage::QueryParser.new("foo includes #{["foo"].to_json}").parse)
     end
+
+    should "properly parse an intersects query" do
+      assert_equal({ foo__intersects: ["foo"]}, Montage::QueryParser.new("foo intersects #{["foo"].to_json}").parse)
+    end
   end
 
   context "#to_array" do
