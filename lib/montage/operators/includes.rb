@@ -1,16 +1,16 @@
 module Montage
   module Operators
-    class In
+    class Includes
       def self.operator
-        "in"
+        "includes"
       end
 
       def self.montage_operator
-        "__in"
+        "__includes"
       end
 
       def self.==(value)
-        value =~ /\bin\b(?=([^']*'[^']*')*[^']*$)/i && !value.downcase.include?("not")
+        value =~ /\bincludes\b(?=([^']*'[^']*')*[^']*$)/i
       end
     end
   end

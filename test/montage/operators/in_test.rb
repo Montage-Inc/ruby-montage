@@ -18,5 +18,13 @@ class Montage::Operators::InTest < Minitest::Test
     should "return true if the operator is capitalized and matches" do
       assert Montage::Operators::In == "foo IN (1,2,3)"
     end
+
+    should "ignore any operators that are inside single quotes" do
+      refute Montage::Operators::In == "foo ilike 'kings'"
+    end
+
+    should "return false for an includes operator" do
+      refute Montage::Operators::In == "foo includes '[\"foo\"]'"
+    end
   end
 end

@@ -9,6 +9,7 @@ require 'montage/operators/ilike'
 require 'montage/operators/like'
 require 'montage/operators/in'
 require 'montage/operators/nil'
+require 'montage/operators/includes'
 
 module Montage
   module Operators
@@ -24,6 +25,7 @@ module Montage
         Montage::Operators::In,
         Montage::Operators::Ilike,
         Montage::Operators::Like,
+        Montage::Operators::Includes
       ]
     end
 
