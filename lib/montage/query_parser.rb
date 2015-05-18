@@ -41,14 +41,18 @@ module Montage
     # Parse a single portion of the query string
     #
     def parse_part(part)
-      if is_i?(part)
-        part.to_i
-      elsif is_f?(part)
-        part.to_f
-      elsif part =~ /\(.*\)/
-        to_array(part)
+      parsed_part = JSON.parse(part) rescue part
+
+      if is_i?(parsed_part)
+        parsed_part.to_i
+      elsif is_f?(parsed_part)
+        parsed_part.to_f
+      elsif parsed_part =~ /\(.*\)/
+        to_array(parsed_part)
+      elsif parsed_part.is_a?(Array)
+        parsed_part
       else
-        part.gsub(/('|')/, "")
+        parsed_part.gsub(/('|')/, "")
       end
     end
 

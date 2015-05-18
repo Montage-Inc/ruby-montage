@@ -61,6 +61,7 @@ class Montage::QueryParserTest < Minitest::Test
       assert_equal 1.2, @parser.parse_part("1.2")
       assert_equal [1,2,3], @parser.parse_part("(1,2,3)")
       assert_equal "foo", @parser.parse_part("foo")
+      assert_equal ["bar", "foo"], @parser.parse_part("[\"bar\", \"foo\"]")
     end
   end
 
@@ -72,6 +73,7 @@ class Montage::QueryParserTest < Minitest::Test
     should "properly get all the parts" do
       assert_equal ["foo", "", "bar"], @parser.get_parts("foo = 'bar'")
       assert_equal ["foo", "__not", "bar"], @parser.get_parts("foo!=bar")
+      assert_equal ["foo", "__includes", "[\"bar\"]"], @parser.get_parts("foo includes '[\"bar\"]'")
     end
 
     should "raise an exception if the query string doesn't have the right number of values" do
@@ -152,6 +154,10 @@ class Montage::QueryParserTest < Minitest::Test
   end
 
   context "#parse" do
+    should "properly parse a query that has IN in the search string" do
+      assert_equal({foo__icontains: "kings"}, Montage::QueryParser.new("foo ilike 'kings'").parse)
+    end
+
     should "properly parse a query that has the word and in the search string" do
       assert_equal({foo: "Fruit and Nut"}, Montage::QueryParser.new("foo = 'Fruit and Nut'").parse)
     end
@@ -214,6 +220,10 @@ class Montage::QueryParserTest < Minitest::Test
 
     should "properly parse an ILIKE query" do
       assert_equal({ foo__icontains: "bar" }, Montage::QueryParser.new("foo ILIKE 'bar'").parse)
+    end
+
+    should "properly parse an includes query" do
+      assert_equal({ foo__includes: ["foo"]}, Montage::QueryParser.new("foo includes #{["foo"].to_json}").parse)
     end
   end
 

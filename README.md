@@ -91,6 +91,7 @@ All API actions are available as methods on the client object. The following met
 | not in      | __notin            |
 | like        | __contains         |
 | ilike       | __icontains        |
+| includes    | __includes         |
 
 
 ## The Query Object
