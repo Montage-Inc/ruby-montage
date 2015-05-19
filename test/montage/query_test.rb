@@ -94,6 +94,18 @@ class Montage::QueryTest < Minitest::Test
     end
   end
 
+  context "#pluck" do
+    setup do
+      @query = Montage::Query.new
+    end
+
+    should "append pluck to the query body" do
+      expected = { filter: {}, pluck: "id" }
+
+      assert_equal expected, @query.pluck("id").query
+    end
+  end
+
   context "#to_json" do
     setup do
       @query = Montage::Query.new

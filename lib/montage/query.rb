@@ -98,6 +98,12 @@ module Montage
       clone.tap { |r| r.query.merge!(index: field) }
     end
 
+    # Pluck just one column from the result set
+    #
+    def pluck(column_name)
+      clone.tap { |r| r.query.merge!(pluck: column_name) }
+    end
+
     # Parses the current query hash and returns a JSON string
     #
     def to_json
