@@ -100,9 +100,33 @@ class Montage::QueryTest < Minitest::Test
     end
 
     should "append pluck to the query body" do
-      expected = { filter: {}, pluck: "id" }
+      expected = { filter: {}, pluck: ["id"] }
 
       assert_equal expected, @query.pluck("id").query
+    end
+
+    should "accept a symbol" do
+      expected = { filter: {}, pluck: ["id"] }
+
+      assert_equal expected, @query.pluck(:id).query
+    end
+  end
+
+  context "#select" do
+    setup do
+      @query = Montage::Query.new
+    end
+
+    should "accept any number of parameters" do
+      expected = { filter: {}, pluck: ["id", "name"] }
+
+      assert_equal expected, @query.select("id", "name").query
+    end
+
+    should "accept symbols" do
+      expected = { filter: {}, pluck: ["id", "name", "email"] }
+
+      assert_equal expected, @query.select(:id, :name, :email).query
     end
   end
 

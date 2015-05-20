@@ -90,6 +90,12 @@ module Montage
       clone.tap { |r| r.query[:filter].merge!(QueryParser.new(clause).parse) }
     end
 
+    # Select a set of columns from the result set
+    #
+    def select(*args)
+      clone.tap { |r| r.query.merge!(pluck: args.map(&:to_s))}
+    end
+
     # Specifies and index to use on a query. RethinkDB isn't as smart as some other
     # database engines when selecting a query plan, but it does let you specify
     # which index to use
@@ -101,7 +107,7 @@ module Montage
     # Pluck just one column from the result set
     #
     def pluck(column_name)
-      clone.tap { |r| r.query.merge!(pluck: column_name) }
+      clone.tap { |r| r.query.merge!(pluck: [column_name.to_s]) }
     end
 
     # Parses the current query hash and returns a JSON string
