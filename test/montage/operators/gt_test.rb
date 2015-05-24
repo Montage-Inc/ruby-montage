@@ -14,5 +14,9 @@ class Montage::Operators::GtTest < Minitest::Test
     should "return false if the operator contains greater than and other operators" do
       refute Montage::Operators::Gt == "foo <> 42"
     end
+
+    should "handle on_hand" do
+      assert Montage::Operators::Gt == "on_hand > 42"
+    end
   end
 end

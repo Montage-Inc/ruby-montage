@@ -171,7 +171,7 @@ class Montage::QueryParserTest < Minitest::Test
     end
 
     should "properly parse a > query" do
-      assert_equal({ foo__gt: "bar" }, Montage::QueryParser.new("foo > 'bar'").parse)
+      assert_equal({ on_hand__gt: 0 }, Montage::QueryParser.new("on_hand > 0").parse)
     end
 
     should "properly parse a >= query" do

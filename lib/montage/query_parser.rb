@@ -87,7 +87,7 @@ module Montage
     #
     def parse_string
       Hash[
-        query.split(/and(?=([^']*'[^']*')*[^']*$)/i).map do |part|
+        query.split(/\band\b(?=([^']*'[^']*')*[^']*$)/i).map do |part|
           column_name, operator, value = get_parts(part)
           ["#{column_name}#{operator}".to_sym, value]
         end
