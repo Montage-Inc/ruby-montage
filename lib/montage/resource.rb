@@ -3,7 +3,7 @@ module Montage
     attr_reader :attributes, :items
 
     def initialize(raw_data = {})
-      @attributes = raw_data.dup.freeze
+      @attributes = raw_data.dup.freeze if raw_data
       @items = parse_items
     end
 

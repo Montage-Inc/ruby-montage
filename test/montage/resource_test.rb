@@ -6,13 +6,20 @@ class Montage::ResourceTest < Minitest::Test
 
   end
 
+  should "not choke if nil data is passed in to the initializer" do
+    resource = TestResource.new(nil)
+
+    assert resource.attributes.nil?
+    assert [], resource.attribute_keys
+  end
+
   should "respond to all attribute keys" do
     resource = TestResource.new({"id" => "1234", "name" => "gary"})
     assert resource.respond_to?(:id)
     assert resource.respond_to?(:name)
   end
 
-  should "return empty attribute keys" do 
+  should "return empty attribute keys" do
     resource = TestResource.new
     assert_equal [], resource.attribute_keys
   end
