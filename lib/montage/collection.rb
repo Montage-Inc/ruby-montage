@@ -32,6 +32,10 @@ module Montage
       end
     end
 
+    def attributes
+      items.map { |item| item.attributes }
+    end
+
     def singular?
       items.length < 2
     end
