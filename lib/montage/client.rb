@@ -13,12 +13,16 @@ module Montage
     include Schemas
     include Documents
 
-    attr_accessor :token, :username, :password, :domain, :api_version
+    attr_accessor :token, :username, :password, :domain, :api_version, :url_prefix
 
     def initialize
       @api_version = 1
       yield(self) if block_given?
       raise MissingAttributeError, "You must declare the domain attribute" unless @domain
+    end
+
+    def default_url_prefix
+      "http://#{domain}.dev.montagehot.club"
     end
 
     def content_type
@@ -97,7 +101,7 @@ module Montage
     def connection
       @connect ||= Faraday.new do |f|
         f.adapter :net_http
-        f.url_prefix = "http://#{domain}.dev.montagehot.club/api/v#{api_version}/"
+        f.url_prefix = "#{url_prefix || default_url_prefix}/api/v#{api_version}/"
         f.headers["User-Agent"] = "Montage Ruby v#{Montage::VERSION}"
         f.headers["Content-Type"] = content_type
         f.headers["Accept"] = "*/*"
