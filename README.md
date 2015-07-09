@@ -32,6 +32,7 @@ client = Montage::Client.new do |c|
   c.password = "YOUR_PASSWORD"
   c.api_version # Optional, defaults to 1
   c.domain = "test" # Your Montage subdomain
+  c.url_prefix = "https://testco.mtnge.com" # Optional, defaults to the montage dev server
 end
 
 response = client.auth
