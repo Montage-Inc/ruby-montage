@@ -22,7 +22,7 @@ module Montage
     end
 
     def default_url_prefix
-      "http://#{domain}.mntge.com"
+      "https://#{domain}.mntge.com"
     end
 
     def content_type
