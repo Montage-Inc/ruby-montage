@@ -106,6 +106,7 @@ module Montage
         f.headers["Content-Type"] = content_type
         f.headers["Accept"] = "*/*"
         f.headers["Authorization"] = "Token #{token}"
+        f.headers["Referer"] = "#{url_prefix || default_url_prefix}/"
         f.response :json, content_type: /\bjson$/
       end
     end
