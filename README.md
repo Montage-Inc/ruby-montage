@@ -34,6 +34,7 @@ client = Montage::Client.new do |c|
   c.api_version # Optional, defaults to 1
   c.domain = "test" # Your Montage subdomain
   c.url_prefix = "https://testco.mtnge.com" # Optional, defaults to the montage dev server
+  c.environment = 'production' # Optional, defaults to production.  Valid options are 'production' and 'development'
 end
 
 response = client.auth

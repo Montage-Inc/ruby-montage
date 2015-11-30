@@ -8,5 +8,9 @@ Rake::TestTask.new do |t|
   t.verbose = true
 end
 
+task :console do
+  exec 'pry -r montage -I ./lib'
+end
+
 desc "Run tests"
 task :default => :test

@@ -13,27 +13,59 @@ module Montage
     include Schemas
     include Documents
 
-    attr_accessor :token, :username, :password, :domain, :api_version, :url_prefix
+    attr_accessor :token,
+                  :username,
+                  :password,
+                  :domain,
+                  :api_version,
+                  :url_prefix,
+                  :environment
 
+    # Initializes the client instance
+    #
+    # Params:
+    # +token+:: API access token required for requests, does not expire
+    #
+    # * Defaults the API version to 1
+    # * Defaults the environment to production
+    # * Raises a MissingAttributeError exception if the domain param is not set
+    # * Raises an InvalidEnvironment exception if the environment param is not 'production' or 'development'
+    #
     def initialize
       @api_version = 1
+      @environment = 'production' if @environment.nil?
       yield(self) if block_given?
-      raise MissingAttributeError, "You must declare the domain attribute" unless @domain
+      fail MissingAttributeError, 'You must declare the domain attribute' unless @domain
+      fail InvalidEnvironment, "Valid options are 'production' and 'development'" unless environment_valid?
     end
 
+    # Verifies the Montage::Client instance environment
+    #
+    # Current valid options:
+    # * 'production'
+    # * 'development'
+    #
+    # Returns a boolean
+    #
+    def environment_valid?
+      return true if @environment == 'production' || @environment == 'development'
+    end
+
+    #
     def default_url_prefix
-      "https://#{domain}.mntge.com"
+      return "https://#{domain}.dev.montagehot.club" if @environment == 'development'
+      return "https://#{domain}.mntge.com" if @environment == 'production'
     end
 
     def content_type
-      "application/json"
+      'application/json'
     end
 
     def auth
-      build_response("token") do
+      build_response('token') do
         connection.post do |req|
-          req.headers.delete("Authorization")
-          req.url "auth/"
+          req.headers.delete('Authorization')
+          req.url 'auth/'
           req.body = { username: username, password: password }.to_json
         end
       end
@@ -77,21 +109,21 @@ module Montage
 
     def set_token(token)
       @token = token
-      connection.headers["Authorization"] = "Token #{token}"
+      connection.headers['Authorization'] = "Token #{token}"
     end
 
     def response_successful?(response)
-      return false if response.body["errors"]
+      return false if response.body['errors']
       response.success?
     end
 
     def build_response(resource_name, &block)
       response = yield
-      resource = response_successful?(response) ? resource_name : "error"
+      resource = response_successful?(response) ? resource_name : 'error'
 
       response_object = Montage::Response.new(response.status, response.body, resource)
 
-      if resource_name == "token" && response.success?
+      if resource_name == 'token' && response.success?
         set_token(response_object.token.value)
       end
 
@@ -102,11 +134,11 @@ module Montage
       @connect ||= Faraday.new do |f|
         f.adapter :net_http
         f.url_prefix = "#{url_prefix || default_url_prefix}/api/v#{api_version}/"
-        f.headers["User-Agent"] = "Montage Ruby v#{Montage::VERSION}"
-        f.headers["Content-Type"] = content_type
-        f.headers["Accept"] = "*/*"
-        f.headers["Authorization"] = "Token #{token}"
-        f.headers["Referer"] = "#{url_prefix || default_url_prefix}/"
+        f.headers['User-Agent'] = "Montage Ruby v#{Montage::VERSION}"
+        f.headers['Content-Type'] = content_type
+        f.headers['Accept'] = '*/*'
+        f.headers['Authorization'] = "Token #{token}"
+        f.headers['Referer'] = "#{url_prefix || default_url_prefix}/"
         f.response :json, content_type: /\bjson$/
       end
     end
