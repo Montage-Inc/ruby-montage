@@ -64,15 +64,6 @@ class Montage::ClientTest < Minitest::Test
       assert_equal 'aaaa', client.token
     end
 
-    should 'accept a url prefix' do
-      client = Montage::Client.new do |c|
-        c.url_prefix = 'testing'
-        c.domain = 'test'
-      end
-
-      assert_equal 'testing', client.url_prefix
-    end
-
     should 'accept an environment parameter' do
       client = Montage::Client.new do |c|
         c.environment = 'production'
