@@ -22,24 +22,25 @@ module Montage
 
     # Initializes the client instance
     #
-    # * *Attributes*    :
+    # * *Attributes* :
     #   - +token+ -> API access token required for requests, does not expire
     #   - +username+ -> Montage username credential
-    #   - +password+ -> Montage username credential
-    #   - +domain+ -> Project subdomain, required for initiliaztion
+    #   - +password+ -> Montage password credential
+    #   - +domain+ -> Project subdomain, required for initialization
     #   - +api_version+ -> API version to query against, defaults to 1
-    #   - +environment+ -> Specifies desired environment for requests, defaults to 'production'
+    #   - +environment+ -> Specifies desired environment for requests, defaults
+    #     to 'production'. Valid options are 'development' and 'production'.
     # * *Returns* :
-    #   - A valid Montage::Client instance, you hope
+    #   - A valid Montage::Client instance
     # * *Raises* :
     #   - +MissingAttributeError+ -> If the domain attribute is not specified
     #   - +InvalidEnvironment+ -> If the environment attribute is not set to 'production' or 'development'
     #
     def initialize
       @api_version = 1
-      @environment = 'production' if @environment.nil?
+      @environment ||= "production"
       yield(self) if block_given?
-      fail MissingAttributeError, 'You must declare the domain attribute' unless @domain
+      fail MissingAttributeError, "You must declare the domain attribute" unless @domain
       fail InvalidEnvironment, "Valid options are 'production' and 'development'" unless environment_valid?
     end
 
@@ -49,7 +50,7 @@ module Montage
     #   - A boolean
     #
     def environment_valid?
-      @environment == 'production' || @environment == 'development' ? true : false
+      %w(production development).include?(@environment)
     end
 
     # Generates a base url for requests using the supplied environment and domain
@@ -58,8 +59,8 @@ module Montage
     #   - A string containing the constructed url
     #
     def default_url_prefix
-      return "https://#{domain}.dev.montagehot.club" if @environment == 'development'
-      return "https://#{domain}.mntge.com" if @environment == 'production'
+      return "https://#{domain}.dev.montagehot.club" if @environment == "development"
+      return "https://#{domain}.mntge.com" if @environment == "production"
     end
 
     # Attempts to authenticate with the Montage API
@@ -68,10 +69,10 @@ module Montage
     #   - A hash containing a valid token or an error string, oh no!
     #
     def auth
-      build_response('token') do
+      build_response("token") do
         connection.post do |req|
-          req.headers.delete('Authorization')
-          req.url 'auth/'
+          req.headers.delete("Authorization")
+          req.url "auth/"
           req.body = { username: username, password: password }.to_json
         end
       end
@@ -85,7 +86,7 @@ module Montage
     #   - +options+ -> A hash of desired options
     # * *Returns* :
     #   * A Montage::Response Object containing:
-    #     - An http status code
+    #     - A http status code
     #     - The response body
     #     - The resource name
     #
@@ -106,7 +107,7 @@ module Montage
     #   - +options+ -> A hash of desired options
     # * *Returns* :
     #   * A Montage::Response Object containing:
-    #     - An http status code
+    #     - A http status code
     #     - The response body
     #     - The resource name
     #
@@ -127,7 +128,7 @@ module Montage
     #   - +options+ -> A hash of desired options
     # * *Returns* :
     #   * A Montage::Response Object containing:
-    #     - An http status code
+    #     - A http status code
     #     - The response body
     #     - The resource name
     #
@@ -148,7 +149,7 @@ module Montage
     #   - +options+ -> A hash of desired options
     # * *Returns* :
     #   * A Montage::Response Object containing:
-    #     - An http status code
+    #     - A http status code
     #     - The response body
     #     - The resource name
     #
@@ -164,11 +165,11 @@ module Montage
     # Sets the authentication token on the client instance and http headers
     #
     # * *Returns* :
-    #   - A header string with the proper token interpolated
+    #   - A string with the proper token interpolated
     #
     def set_token(token)
       @token = token
-      connection.headers['Authorization'] = "Token #{token}"
+      connection.headers["Authorization"] = "Token #{token}"
     end
 
     # Checks the response body for an errors key and a successful http status code
@@ -179,7 +180,7 @@ module Montage
     #   - A boolean
     #
     def response_successful?(response)
-      return false if response.body['errors']
+      return false if response.body["errors"]
       response.success?
     end
 
@@ -189,17 +190,17 @@ module Montage
     #   - +resource_name+ -> The name of the Montage resource
     # * *Returns* :
     #   * A Montage::Response Object containing:
-    #     - An http status code
+    #     - A http status code
     #     - The response body
     #     - The resource name
     #
     def build_response(resource_name)
       response = yield
-      resource = response_successful?(response) ? resource_name : 'error'
+      resource = response_successful?(response) ? resource_name : "error"
 
       response_object = Montage::Response.new(response.status, response.body, resource)
 
-      set_token(response_object.token.value) if resource_name == 'token' && response.success?
+      set_token(response_object.token.value) if resource_name == "token" && response.success?
 
       response_object
     end
@@ -211,11 +212,11 @@ module Montage
     #
     def connection_headers
       {
-        'User-Agent' => "Montage Ruby v#{Montage::VERSION}",
-        'Content-Type' => 'application/json',
-        'Accept' => '*/*',
-        'Authorization' => "Token #{token}",
-        'Referer' => "#{default_url_prefix}/"
+        "User-Agent" => "Montage Ruby v#{Montage::VERSION}",
+        "Content-Type" => "application/json",
+        "Accept" => "*/*",
+        "Authorization" => "Token #{token}",
+        "Referer" => "#{default_url_prefix}/"
       }
     end
 
