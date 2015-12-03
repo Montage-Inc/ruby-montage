@@ -4,9 +4,9 @@ require 'montage/client'
 class Montage::ClientTest < Minitest::Test
   context "initialization" do
     should "accept a username" do
-      client = Montage::Client.new do |config|
-        config.username = "me@foobar.com"
-        config.domain= "test"
+      client = Montage::Client.new do |c|
+        c.username = "me@foobar.com"
+        c.domain = "test"
       end
 
       assert_equal "me@foobar.com", client.username
@@ -14,53 +14,100 @@ class Montage::ClientTest < Minitest::Test
 
     should "raise exception if no domain is passed" do
       assert_raises(Montage::MissingAttributeError, "You must declare the domain attribute") do
-        client = Montage::Client.new do |config|
-          config.username = "me@foobar.com"
+        Montage::Client.new do |c|
+          c.username = "me@foobar.com"
         end
       end
     end
 
     should "set the api version to 1 by default" do
-      client = Montage::Client.new do |config|
-        config.username = "me@foobar.com"
-        config.domain = "test"
+      client = Montage::Client.new do |c|
+        c.username = "me@foobar.com"
+        c.domain = "test"
       end
       assert_equal 1, client.api_version
     end
 
     should "overwrite the api version" do
-      client = Montage::Client.new do |config|
-        config.username = "me@foobar.com"
-        config.domain = "test"
-        config.api_version = 2
+      client = Montage::Client.new do |c|
+        c.username = "me@foobar.com"
+        c.domain = "test"
+        c.api_version = 2
       end
+
       assert_equal 2, client.api_version
     end
 
     should "accept a password" do
-      client = Montage::Client.new do |config|
-        config.password = "foo"
-        config.domain= "test"
+      client = Montage::Client.new do |c|
+        c.password = "foo"
+        c.domain = "test"
       end
 
       assert_equal "foo", client.password
     end
 
     should "accept a domain name" do
-      client = Montage::Client.new do |config|
-        config.domain = "mydomain"
+      client = Montage::Client.new do |c|
+        c.domain = "mydomain"
       end
 
       assert_equal "mydomain", client.domain
     end
 
     should "accept a token" do
-      client = Montage::Client.new do |config|
-        config.token = "aaaa"
-        config.domain= "test"
+      client = Montage::Client.new do |c|
+        c.token = "aaaa"
+        c.domain = "test"
       end
 
       assert_equal "aaaa", client.token
+    end
+
+    should "accept an environment parameter" do
+      client = Montage::Client.new do |c|
+        c.environment = "production"
+        c.domain = "test"
+      end
+
+      assert_equal "production", client.environment
+    end
+
+    should "default the environment param to production" do
+      client = Montage::Client.new do |c|
+        c.domain = "test"
+      end
+
+      assert_equal "production", client.environment
+    end
+
+    should "raise an exception if an invalid environment is specified" do
+      assert_raises(Montage::InvalidEnvironment) do
+        Montage::Client.new do |c|
+          c.domain = "test"
+          c.environment = "foo"
+        end
+      end
+    end
+  end
+
+  context "#default_url_prefix" do
+    should "return the production url when configured for a production environment" do
+      client = Montage::Client.new do |c|
+        c.domain = "test"
+        c.environment = "production"
+      end
+
+      assert_equal "https://test.mntge.com", client.default_url_prefix
+    end
+
+    should "return the development url when configured for a development environment" do
+      client = Montage::Client.new do |c|
+        c.domain = "test"
+        c.environment = "development"
+      end
+
+      assert_equal "https://test.dev.montagehot.club", client.default_url_prefix
     end
   end
 
@@ -127,7 +174,7 @@ class Montage::ClientTest < Minitest::Test
     context "when the server returns a 500" do
       setup do
         @response = Faraday::Response.new
-        @response.stubs(:body).returns({ "errors" => [] })
+        @response.stubs(:body).returns("errors" => [])
         @response.stubs(:status).returns(500)
       end
 
@@ -143,21 +190,22 @@ class Montage::ClientTest < Minitest::Test
     context "when the server returns a 200 with errors" do
       setup do
         @response = Faraday::Response.new
-        @response.stubs(:body).returns({
-          "errors" =>
-            [{
-              "document"=>
-                { "id"=>"0838d9f9-5cd9-40dd-94e9-5f780cd97df7",
-                  "title"=>"The Son of Jaws Returns II: Jaws Harder",
-                  "rank"=>0,
-                  "rating"=>0,
-                  "votes"=>0,
-                  "_meta"=>{"created"=>"2015-04-18T19:21:44.989Z", "modified"=>"2015-04-18T19:21:44.989Z"},
-                  "year"=>"foo"
+        @response.stubs(:body).returns(
+          "errors" => [
+            {
+              "document" =>
+                { "id" => "0838d9f9-5cd9-40dd-94e9-5f780cd97df7",
+                  "title" => "The Son of Jaws Returns II: Jaws Harder",
+                  "rank" => 0,
+                  "rating" => 0,
+                  "votes" => 0,
+                  "_meta" => { "created" => "2015-04-18T19:21:44.989Z", "modified" => "2015-04-18T19:21:44.989Z" },
+                  "year" => "foo"
                 },
-              "errors"=>{"year"=>["Enter a number."]}
-            }]
-        })
+              "errors" => { "year" => ["Enter a number."] }
+            }
+          ]
+        )
         @response.stubs(:status).returns(200)
       end
 

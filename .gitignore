@@ -13,3 +13,4 @@ tmp.json
 ruby-montage-*.gem
 /build
 *.swp
+*.scratch
