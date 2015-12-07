@@ -25,7 +25,7 @@ module Montage
     def initialize(params = {})
       @schema = params[:schema]
       @query = { "$schema" => @schema, "$query" => { "$filter" => {} } }
-      fail InvalidAttributeFormat, "Message" unless schema_valid?
+      fail InvalidAttributeFormat, "Schema attribute must be declared and valid!" unless schema_valid?
     end
 
     # Validates the Montage::Query schema attribute

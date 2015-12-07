@@ -9,6 +9,20 @@ class Montage::QueryTest < Minitest::Test
       assert_equal "bob_ross_paintings", query.schema
     end
 
+    should "disallow post-init mutation on the schema attribute" do
+      query = Montage::Query.new(schema: "bob_ross_paintings")
+
+      assert_raises(NoMethodError) do
+        query.schema = "not_so_fast_my_friend"
+      end
+    end
+
+    should "raise an exception if the schema attribute is missing" do
+      assert_raises(Montage::InvalidAttributeFormat) do
+        Montage::Query.new
+      end
+    end
+
     should "raise an exception if the schema attribute is not a string" do
       assert_raises(Montage::InvalidAttributeFormat) do
         Montage::Query.new(schema: :happy_little_trees)
