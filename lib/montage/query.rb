@@ -24,8 +24,15 @@ module Montage
     #
     def initialize(params = {})
       @schema = params[:schema]
-      @query = { "$schema" => @schema, "$query" => { "$filter" => {} } }
-      fail InvalidAttributeFormat, "Schema attribute must be declared and valid!" unless schema_valid?
+      @query = {
+        "$schema" => @schema,
+        "$query" => [
+          ["$filter", []]
+        ]
+      }
+      fail(
+        InvalidAttributeFormat, "Schema attribute must be declared and valid!"
+      ) unless schema_valid?
     end
 
     # Validates the Montage::Query schema attribute
@@ -110,7 +117,7 @@ module Montage
     #   - A copy of self
     #
     def where(clause)
-      clone.tap { |r| r.query["$query"]["$filter"].merge!(QueryParser.new(clause).parse) }
+      clone.tap { |r| r.query[:filter].merge!(QueryParser.new(clause).parse) }
     end
 
     # Select a set of columns from the result set
@@ -124,7 +131,7 @@ module Montage
     #   - A copy of self
     #
     def select(*args)
-      clone.tap { |r| r.query.merge!("$pluck" => args.map(&:to_s)) }
+      clone.tap { |r| r.query.merge!(pluck: args.map(&:to_s)) }
     end
 
     # Specifies an index to use on a query.
@@ -140,7 +147,7 @@ module Montage
     #   - A copy of self
     #
     def index(field)
-      clone.tap { |r| r.query.merge!("$index" => field) }
+      clone.tap { |r| r.query.merge!(index: field) }
     end
 
     # Pluck just one column from the result set
@@ -154,7 +161,7 @@ module Montage
     #   - A copy of self
     #
     def pluck(column_name)
-      clone.tap { |r| r.query.merge!("$pluck" => [column_name.to_s]) }
+      clone.tap { |r| r.query.merge!(pluck: [column_name.to_s]) }
     end
 
     # Parses the current query hash and returns a JSON string
