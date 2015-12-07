@@ -15,7 +15,7 @@ require 'minitest/reporters'
 require 'shoulda-context'
 require 'mocha/setup'
 require 'faraday'
-
+require 'pry'
 
 Minitest::Reporters.use! [Minitest::Reporters::ProgressReporter.new(:color => true)]
 

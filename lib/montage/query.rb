@@ -8,9 +8,33 @@ module Montage
     include Montage::Support
 
     attr_accessor :query
+    attr_reader :schema
 
-    def initialize
-      @query = { filter: {} }
+    # Initializes the query instance
+    #
+    # * *Attributes* :
+    #   - +schema+ -> The name of the schema you wish to query.  Alphanumeric
+    #     characters and underscores are allowed.
+    #   - +query+ -> A query hash containing desired options
+    # * *Returns* :
+    #   - A valid Montage::Query instance
+    # * *Raises* :
+    #   - +InvalidAttributeFormat+ -> If the declared schema is not a string or
+    #     contains non-alphanumeric characters.  Underscore ("_") is allowed!
+    #
+    def initialize(params = {})
+      @schema = params[:schema]
+      @query = { "$schema" => @schema, "$query" => { "$filter" => {} } }
+      fail InvalidAttributeFormat, "Message" unless schema_valid?
+    end
+
+    # Validates the Montage::Query schema attribute
+    #
+    # * *Returns* :
+    #   - A boolean
+    #
+    def schema_valid?
+      @schema.is_a?(String) && @schema.index(/\W+/).nil?
     end
 
     # Defines the limit to apply to the query, defaults to nil
@@ -77,37 +101,60 @@ module Montage
 
     # Adds a where clause to the query filter hash
     #
-    # Accepts either a Hash or a String
-    #     where(foo: 1)
-    #     where("foo > 1")
-    #
-    # Merges a hash:
-    #   { foo: 1 }
-    #
-    # Returns a copy of self
+    # * *Args* :
+    #   - +clause+ -> A hash or string containing desired options
+    # * *Example* :
+    #   - where(foo: 1)
+    #   - where("foo > 1")
+    # * *Returns* :
+    #   - A copy of self
     #
     def where(clause)
-      clone.tap { |r| r.query[:filter].merge!(QueryParser.new(clause).parse) }
+      clone.tap { |r| r.query["$query"]["$filter"].merge!(QueryParser.new(clause).parse) }
     end
 
     # Select a set of columns from the result set
     #
+    # * *Args* :
+    #   - +Array+ -> Accepts multiple column names as a string or symbol
+    # * *Example* :
+    #   - select(:id, :user_name)
+    #   - select("column_name")
+    # * *Returns* :
+    #   - A copy of self
+    #
     def select(*args)
-      clone.tap { |r| r.query.merge!(pluck: args.map(&:to_s))}
+      clone.tap { |r| r.query.merge!("$pluck" => args.map(&:to_s)) }
     end
 
-    # Specifies and index to use on a query. RethinkDB isn't as smart as some other
-    # database engines when selecting a query plan, but it does let you specify
-    # which index to use
+    # Specifies an index to use on a query.
+    #
+    # * *Notes* :
+    #   - RethinkDB isn't as smart as some other database engines when selecting
+    #     a query plan, but it does let you specify which index to use
+    # * *Args* :
+    #   - +field+ -> The index value in string format
+    # * *Example* :
+    #   - index("value")
+    # * *Returns* :
+    #   - A copy of self
     #
     def index(field)
-      clone.tap { |r| r.query.merge!(index: field) }
+      clone.tap { |r| r.query.merge!("$index" => field) }
     end
 
     # Pluck just one column from the result set
     #
+    # * *Args* :
+    #   - +column_name+ -> Accepts a single string or symbol value for the column
+    # * *Example* :
+    #   - pluck(:id)
+    #   - pluck("column_name")
+    # * *Returns* :
+    #   - A copy of self
+    #
     def pluck(column_name)
-      clone.tap { |r| r.query.merge!(pluck: [column_name.to_s]) }
+      clone.tap { |r| r.query.merge!("$pluck" => [column_name.to_s]) }
     end
 
     # Parses the current query hash and returns a JSON string

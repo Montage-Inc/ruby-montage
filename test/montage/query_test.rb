@@ -2,68 +2,106 @@ require File.dirname(__FILE__) + '/../minitest_helper.rb'
 require 'montage/query'
 
 class Montage::QueryTest < Minitest::Test
-  context "#limit" do
-    setup do
-      @query = Montage::Query.new
-      @expected = { filter: {}, limit: 10 }
+  context "initialization" do
+    should "accept a schema attribute" do
+      query = Montage::Query.new(schema: "bob_ross_paintings")
+
+      assert_equal "bob_ross_paintings", query.schema
     end
 
-    should "append the limit attribute to the query body" do
-      assert_equal @expected, @query.limit(10).query
+    should "raise an exception if the schema attribute is not a string" do
+      assert_raises(Montage::InvalidAttributeFormat) do
+        Montage::Query.new(schema: :happy_little_trees)
+      end
     end
 
-    should "set the default to nil" do
-      assert_equal({filter: {}, limit: nil}, @query.limit.query)
+    should "raise an exception if the schema attribute contains invalid characters" do
+      assert_raises(Montage::InvalidAttributeFormat) do
+        Montage::Query.new(schema: "happy accident")
+      end
     end
   end
 
-  context "#offset" do
-    setup do
-      @query = Montage::Query.new
-      @expected = { filter: {}, offset: 10 }
-    end
-
-    should "append the offset attribute to the query body" do
-      assert_equal @expected, @query.offset(10).query
-    end
-
-    should "set the default to nil" do
-      assert_equal({ filter: {}, offset: nil }, @query.offset.query)
-    end
-  end
-
-  context "#order" do
-    setup do
-      @query = Montage::Query.new
-      @expected = { filter: {}, order_by: "foobar",ordering: "asc" }
-    end
-
-    should "append the order attribute to the query body" do
-      assert_equal @expected, @query.order("foobar asc").query
-    end
-
-    should "set the default sort order to asc if not passed in" do
-      assert_equal @expected, @query.order("foobar").query
-    end
-
-    should "set the order to empty" do
-      assert_equal({ filter: {}, order_by: "",ordering: "" }, @query.order.query)
-    end
-
-    should "accept and properly parse a hash" do
-      assert_equal @expected, @query.order(foobar: :asc).query
-    end
-  end
+  # context "#limit" do
+  #   setup do
+  #     @query = Montage::Query.new(schema: "bob_ross_paintings")
+  #     @expected = {
+  #       "$schema" => "bob_ross_paintings",
+  #       "$query" => { "$filter" => {} },
+  #       "$limit" => 10
+  #     }
+  #   end
+  #
+  #   should "append the limit attribute to the query body" do
+  #     assert_equal @expected, @query.limit(10).query
+  #   end
+  #
+  #   should "set the default to nil" do
+  #     assert_equal(
+  #       {
+  #         "$schema" => "bob_ross_paintings",
+  #         "$query" => { "$filter" => {} },
+  #         "$limit" => nil
+  #       },
+  #       @query.limit.query
+  #     )
+  #   end
+  # end
+  #
+  # context "#offset" do
+  #   setup do
+  #     @query = Montage::Query.new(schema: "bob_ross_paintings")
+  #     @expected = {
+  #       "$schema" => "bob_ross_paintings",
+  #       "$query" => { "$filter" => {} },
+  #       "$offset" => 10
+  #     }
+  #   end
+  #
+  #   should "append the offset attribute to the query body" do
+  #     assert_equal @expected, @query.offset(10).query
+  #   end
+  #
+  #   should "set the default to nil" do
+  #     assert_equal({ filter: {}, offset: nil }, @query.offset.query)
+  #   end
+  # end
+  #
+  # context "#order" do
+  #   setup do
+  #     @query = Montage::Query.new(schema: "bob_ross_paintings")
+  #     @expected = { filter: {}, order_by: "foobar",ordering: "asc" }
+  #   end
+  #
+  #   should "append the order attribute to the query body" do
+  #     assert_equal @expected, @query.order("foobar asc").query
+  #   end
+  #
+  #   should "set the default sort order to asc if not passed in" do
+  #     assert_equal @expected, @query.order("foobar").query
+  #   end
+  #
+  #   should "set the order to empty" do
+  #     assert_equal({ filter: {}, order_by: "",ordering: "" }, @query.order.query)
+  #   end
+  #
+  #   should "accept and properly parse a hash" do
+  #     assert_equal @expected, @query.order(foobar: :asc).query
+  #   end
+  # end
 
   context "#where" do
     setup do
-      @query = Montage::Query.new
+      @query = Montage::Query.new(schema: "bob_ross_paintings")
     end
 
     should "append the filter to the query body" do
       expected = {
-        filter: {
-          foo__lte: 1.0
+        "$schema" => "bob_ross_paintings",
+        "$query" => {
+          "$filter" => {
+            foo__lte: 1
+          }
         }
       }
 
@@ -72,9 +110,12 @@ class Montage::QueryTest < Minitest::Test
 
     should "work with AND operator" do
       expected = {
-        filter: {
-          foo__lt: 5.0,
-          foo__gt: 3.0
+        "$schema" => "bob_ross_paintings",
+        "$query" => {
+          "$filter" => {
+            foo__lt: 5,
+            foo__gt: 3
+          }
         }
       }
 
@@ -84,11 +125,17 @@ class Montage::QueryTest < Minitest::Test
 
   context "#index" do
     setup do
-      @query = Montage::Query.new
+      @query = Montage::Query.new(schema: "bob_ross_paintings")
     end
 
     should "append the index to the query body" do
-      expected = { filter: {}, index: "foo" }
+      expected = {
+        "$schema" => "bob_ross_paintings",
+        "$query" => {
+          "$filter" => {}
+        },
+        "$index" => "foo"
+      }
 
       assert_equal expected, @query.index("foo").query
     end
@@ -96,17 +143,29 @@ class Montage::QueryTest < Minitest::Test
 
   context "#pluck" do
     setup do
-      @query = Montage::Query.new
+      @query = Montage::Query.new(schema: "bob_ross_paintings")
     end
 
     should "append pluck to the query body" do
-      expected = { filter: {}, pluck: ["id"] }
+      expected = {
+        "$schema" => "bob_ross_paintings",
+        "$query" => {
+          "$filter" => {}
+        },
+        "$pluck" => ["id"]
+      }
 
       assert_equal expected, @query.pluck("id").query
     end
 
     should "accept a symbol" do
-      expected = { filter: {}, pluck: ["id"] }
+      expected = {
+        "$schema" => "bob_ross_paintings",
+        "$query" => {
+          "$filter" => {}
+        },
+        "$pluck" => ["id"]
+      }
 
       assert_equal expected, @query.pluck(:id).query
     end
@@ -114,17 +173,29 @@ class Montage::QueryTest < Minitest::Test
 
   context "#select" do
     setup do
-      @query = Montage::Query.new
+      @query = Montage::Query.new(schema: "bob_ross_paintings")
     end
 
     should "accept any number of parameters" do
-      expected = { filter: {}, pluck: ["id", "name"] }
+      expected = {
+        "$schema" => "bob_ross_paintings",
+        "$query" => {
+          "$filter" => {}
+        },
+        "$pluck" => %w(id name)
+      }
 
       assert_equal expected, @query.select("id", "name").query
     end
 
     should "accept symbols" do
-      expected = { filter: {}, pluck: ["id", "name", "email"] }
+      expected = {
+        "$schema" => "bob_ross_paintings",
+        "$query" => {
+          "$filter" => {}
+        },
+        "$pluck" => %w(id name email)
+      }
 
       assert_equal expected, @query.select(:id, :name, :email).query
     end
@@ -132,11 +203,13 @@ class Montage::QueryTest < Minitest::Test
 
   context "#to_json" do
     setup do
-      @query = Montage::Query.new
+      @query = Montage::Query.new(schema: "test")
     end
 
     should "parse the query to a json format" do
-      assert_equal "{\"filter\":{\"foo\":1,\"bar__gt\":2},\"order_by\":\"created_at\",\"ordering\":\"desc\",\"limit\":10}", @query.where(foo: 1).where("bar > 2").order(created_at: :desc).limit(10).to_json
+      expected = "{\"$schema\":\"test\",\"$query\":{\"$filter\":{\"foo__gt\":10}},\"$index\":\"bob\"}"
+
+      assert_equal expected, @query.where("foo > 10").index("bob").to_json
     end
   end
 end
