@@ -22,40 +22,29 @@ class Montage::Client::DocumentsTest < Montage::TestCase
   context "#documents" do
     setup do
       @response_status = 200
-      @response_body = { "data" => [] }
-      @payload = { filter: {}, limit: 1 }
+      @response_body = { "data" => { "query1" => [{ "foo" => 1, "id" => "000" }] } }
+      @payload = {
+        "query1" => {
+          "$schema" => "test",
+          "$query" => [
+            ["$filter", [
+              ["foo", ["$eq", 1]]
+            ]]
+          ]
+        }
+      }
 
-      @stubs.post "/schemas/movies/query/", @payload.to_json do
+      @stubs.post "query/", @payload.to_json do
         [@response_status, {}, @response_body]
       end
     end
 
     should "send the right request" do
       expected = Montage::Response.new(@response_status, @response_body, "document")
-      response = @client.documents("movies", @payload)
+      response = @client.documents(@payload)
 
       assert_response_equal expected, response
-      assert_equal Montage::Documents, response.members.class
-    end
-  end
-
-  context "#document" do
-    setup do
-      @response_status = 200
-      @id = "fj3489qfh9853484yg54789y"
-      @response_body = { "data" => [] }
-
-      @stubs.get "/schemas/movies/#{@id}/" do
-        [@response_status, {}, @response_body]
-      end
-    end
-
-    should "send the right request" do
-      expected = Montage::Response.new(@response_status, @response_body, "document")
-      response = @client.document("movies", @id)
-
-      assert_response_equal expected, response
-      assert_equal Montage::Documents, response.members.class
+      assert_equal Montage::Document, response.members.class
     end
   end
 
