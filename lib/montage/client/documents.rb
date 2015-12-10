@@ -1,28 +1,50 @@
 module Montage
   class Client
     module Documents
-      # Public: Get a list of documents
+      # Public: Get a list of documents.  Batch and single queries are supported
+      # via the formatting listed below.
       #
-      # Params:
-      #   schema - *Required* The name of the schema to run the query against
-      #   query  - *Optional* A Montage::Query object to pass along with the request
+      # * *Args* :
+      #   - +queries+ -> A Montage::Query object or batch of objects to pass
+      #     along with the request
+      # * *Returns* :
+      #   - A Montage::Response that will resemble:
+      #    {
+      #      "data"=> {
+      #        "query1"=> [
+      #          {
+      #            "name"=>"happy accidents everywhere",
+      #            "price"=>"999,999,999",
+      #            "signed"=>true,
+      #            "id"=>"-1"
+      #          }
+      #        ]
+      #      }
+      #    }
+      # * *Examples* :
+      #   - A Single Query :
       #
-      # Returns a Montage::Response
+      #    {
+      #      "query1" => {
+      #        "$schema" => "bob_ross_paintings",
+      #        "$query" => [
+      #          ["$filter", [
+      #            ["rating", ['$gt', 8]]
+      #          ]],
+      #          ["$limit", 1]
+      #        ]
+      #      }
+      #    }
       #
-      def documents(schema, query = {})
-        post("schemas/#{schema}/query/", "document", query)
-      end
-
-      # Public: Fetch a document
+      #   - Batch Queries :
       #
-      # Params:
-      #   schema        - *Required* The name of the schema to fetch the document from
-      #   document_uuid - *Required* The uuid of the document to fetch
+      #    {
+      #      query1: { '$schema': 'bob_ross_paintings', ... },
+      #      query2: { '$schema': 'happy_little_trees', ... }
+      #    }
       #
-      # Returns a Montage::Response
-      #
-      def document(schema, document_uuid)
-        get("schemas/#{schema}/#{document_uuid}/", "document")
+      def documents(queries)
+        post("query/", "document", queries)
       end
 
       # Public: Get the set of documents for the given cursor
