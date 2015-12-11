@@ -10,7 +10,7 @@ module Montage
     attr_accessor :query
     attr_reader :schema
 
-    # Initializes the query instance
+    # Initializes the query instance via a params hash
     #
     # * *Attributes* :
     #   - +schema+ -> The name of the schema you wish to query.  Alphanumeric
@@ -21,6 +21,11 @@ module Montage
     # * *Raises* :
     #   - +InvalidAttributeFormat+ -> If the declared schema is not a string or
     #     contains non-alphanumeric characters.  Underscore ("_") is allowed!
+    # * *Examples* :
+    #   - +Initialize+
+    #      @query = Montage::Query.new(schema: 'testing')
+    #   - +Return+
+    #      => #<Montage::Query:ID @query={"$schema"=>"testing", "$query"=>[["$filter", []]]}, @schema="testing">
     #
     def initialize(params = {})
       @schema = params[:schema]
@@ -44,15 +49,39 @@ module Montage
       @schema.is_a?(String) && @schema.index(/\W+/).nil?
     end
 
+    # Adds a query parameter to Montage::Query instances in the form of
+    # an array. Checks for existing array elements and replaces them if found.
+    #
+    # * *Args* :
+    #   - +query_param+ -> A query-modifing parameter in the form of an array.
+    #     Composed of a ReQON supported string as a designator and an
+    #     associated value.
+    #
+    # * *Returns* :
+    #   - The updated array
+    #
+    def merge_array(query_param)
+      arr = query["$query"]
+      position = arr.index(arr.assoc(query_param[0]))
+
+      if position.nil?
+        arr.push(query_param)
+      else
+        arr[position].replace(query_param)
+      end
+    end
+
     # Defines the limit to apply to the query, defaults to nil
     #
-    # Merges a hash:
-    #  { limit: 10 }
-    #
-    # Returns self
+    # * *Args* :
+    #   - +max+ -> The max number of desired results
+    # * *Returns* :
+    #   - An updated copy of self
+    # * *Examples* :
+    #    ["$limit", 99]
     #
     def limit(max = nil)
-      clone.tap { |r| r.query.merge!(limit: max) }
+      clone.tap { |r| r.merge_array(["$limit", max]) }
     end
 
     # Defines the offset to apply to the query, defaults to nil

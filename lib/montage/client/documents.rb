@@ -8,7 +8,7 @@ module Montage
       #   - +queries+ -> A Montage::Query object or batch of objects to pass
       #     along with the request
       # * *Returns* :
-      #   - A Montage::Response that will resemble:
+      #   - A Montage::Response with a raw body that will resemble:
       #    {
       #      "data"=> {
       #        "query1"=> [

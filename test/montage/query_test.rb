@@ -36,31 +36,29 @@ class Montage::QueryTest < Minitest::Test
     end
   end
 
-  # context "#limit" do
-  #   setup do
-  #     @query = Montage::Query.new(schema: "bob_ross_paintings")
-  #     @expected = {
-  #       "$schema" => "bob_ross_paintings",
-  #       "$query" => { "$filter" => {} },
-  #       "$limit" => 10
-  #     }
-  #   end
-  #
-  #   should "append the limit attribute to the query body" do
-  #     assert_equal @expected, @query.limit(10).query
-  #   end
-  #
-  #   should "set the default to nil" do
-  #     assert_equal(
-  #       {
-  #         "$schema" => "bob_ross_paintings",
-  #         "$query" => { "$filter" => {} },
-  #         "$limit" => nil
-  #       },
-  #       @query.limit.query
-  #     )
-  #   end
-  # end
+  context "#limit" do
+    setup do
+      @query = Montage::Query.new(schema: "bob_ross_paintings")
+    end
+
+    should "append the limit attribute to the query body" do
+      @expected = [["$filter", []], ["$limit", 10]]
+
+      assert_equal @expected, @query.limit(10).query["$query"]
+    end
+
+    should "replace existing limit attributes" do
+      @expected = [["$filter", []], ["$limit", 99]]
+
+      assert_equal @expected, @query.limit(1).limit(99).query["$query"]
+    end
+
+    should "set the default to nil" do
+      @expected = [["$filter", []], ["$limit", nil]]
+
+      assert_equal @expected, @query.limit.query["$query"]
+    end
+  end
   #
   # context "#offset" do
   #   setup do
