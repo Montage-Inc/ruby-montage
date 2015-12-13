@@ -7,7 +7,7 @@ module Montage
   class Query
     include Montage::Support
 
-    attr_accessor :query
+    attr_accessor :options
     attr_reader :schema
 
     # Initializes the query instance via a params hash
@@ -15,7 +15,7 @@ module Montage
     # * *Attributes* :
     #   - +schema+ -> The name of the schema you wish to query.  Alphanumeric
     #     characters and underscores are allowed.
-    #   - +query+ -> A query hash containing desired options
+    #   - +options+ -> A query hash containing desired options
     # * *Returns* :
     #   - A valid Montage::Query instance
     # * *Raises* :
@@ -29,7 +29,7 @@ module Montage
     #
     def initialize(params = {})
       @schema = params[:schema]
-      @query = {
+      @options = {
         "$schema" => @schema,
         "$query" => [
           ["$filter", []]
@@ -61,7 +61,7 @@ module Montage
     #   - The updated array
     #
     def merge_array(query_param)
-      arr = query["$query"]
+      arr = options["$query"]
       position = arr.index(arr.assoc(query_param[0]))
 
       if position.nil?
@@ -196,7 +196,7 @@ module Montage
     # Parses the current query hash and returns a JSON string
     #
     def to_json
-      @query.to_json
+      @options.to_json
     end
   end
 end

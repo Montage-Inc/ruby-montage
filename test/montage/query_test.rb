@@ -44,19 +44,19 @@ class Montage::QueryTest < Minitest::Test
     should "append the limit attribute to the query body" do
       @expected = [["$filter", []], ["$limit", 10]]
 
-      assert_equal @expected, @query.limit(10).query["$query"]
+      assert_equal @expected, @query.limit(10).options["$query"]
     end
 
     should "replace existing limit attributes" do
       @expected = [["$filter", []], ["$limit", 99]]
 
-      assert_equal @expected, @query.limit(1).limit(99).query["$query"]
+      assert_equal @expected, @query.limit(1).limit(99).options["$query"]
     end
 
     should "set the default to nil" do
       @expected = [["$filter", []], ["$limit", nil]]
 
-      assert_equal @expected, @query.limit.query["$query"]
+      assert_equal @expected, @query.limit.options["$query"]
     end
   end
   #
