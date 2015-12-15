@@ -36,31 +36,70 @@ class Montage::QueryTest < Minitest::Test
     end
   end
 
-  # context "#limit" do
-  #   setup do
-  #     @query = Montage::Query.new(schema: "bob_ross_paintings")
-  #     @expected = {
-  #       "$schema" => "bob_ross_paintings",
-  #       "$query" => { "$filter" => {} },
-  #       "$limit" => 10
-  #     }
-  #   end
-  #
-  #   should "append the limit attribute to the query body" do
-  #     assert_equal @expected, @query.limit(10).query
-  #   end
-  #
-  #   should "set the default to nil" do
-  #     assert_equal(
-  #       {
-  #         "$schema" => "bob_ross_paintings",
-  #         "$query" => { "$filter" => {} },
-  #         "$limit" => nil
-  #       },
-  #       @query.limit.query
-  #     )
-  #   end
-  # end
+  context "#merge_array" do
+    setup do
+      @query = Montage::Query.new(schema: "bob_ross_paintings")
+      @query_param = ["$ReQON", 1]
+    end
+
+    should "merge a non-existent parameter into the query options" do
+      @expected = {
+        "$schema" => "bob_ross_paintings",
+        "$query" => [
+          ["$filter", []],
+          ["$ReQON", 1]
+        ]
+      }
+
+      @query.merge_array(@query_param)
+      assert_equal @expected, @query.options
+    end
+
+    should "find and replace an existing query parameter" do
+      @query.options = {
+        "$schema" => "bob_ross_paintings",
+        "$query" => [
+          ["$filter", []],
+          ["$ReQON", "value_to_be_replaced"]
+        ]
+      }
+
+      @expected = {
+        "$schema" => "bob_ross_paintings",
+        "$query" => [
+          ["$filter", []],
+          ["$ReQON", 1]
+        ]
+      }
+
+      @query.merge_array(@query_param)
+      assert_equal @expected, @query.options
+    end
+  end
+
+  context "#limit" do
+    setup do
+      @query = Montage::Query.new(schema: "bob_ross_paintings")
+    end
+
+    should "append the limit attribute to the query body" do
+      @expected = [["$filter", []], ["$limit", 10]]
+
+      assert_equal @expected, @query.limit(10).options["$query"]
+    end
+
+    should "replace existing limit attributes" do
+      @expected = [["$filter", []], ["$limit", 99]]
+
+      assert_equal @expected, @query.limit(1).limit(99).options["$query"]
+    end
+
+    should "set the default to nil" do
+      @expected = [["$filter", []], ["$limit", nil]]
+
+      assert_equal @expected, @query.limit.options["$query"]
+    end
+  end
   #
   # context "#offset" do
   #   setup do
