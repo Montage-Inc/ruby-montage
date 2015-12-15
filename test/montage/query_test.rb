@@ -36,6 +36,47 @@ class Montage::QueryTest < Minitest::Test
     end
   end
 
+  context "#merge_array" do
+    setup do
+      @query = Montage::Query.new(schema: "bob_ross_paintings")
+      @query_param = ["$ReQON", 1]
+    end
+
+    should "merge a non-existent parameter into the query options" do
+      @expected = {
+        "$schema" => "bob_ross_paintings",
+        "$query" => [
+          ["$filter", []],
+          ["$ReQON", 1]
+        ]
+      }
+
+      @query.merge_array(@query_param)
+      assert_equal @expected, @query.options
+    end
+
+    should "find and replace an existing query parameter" do
+      @query.options = {
+        "$schema" => "bob_ross_paintings",
+        "$query" => [
+          ["$filter", []],
+          ["$ReQON", "value_to_be_replaced"]
+        ]
+      }
+
+      @expected = {
+        "$schema" => "bob_ross_paintings",
+        "$query" => [
+          ["$filter", []],
+          ["$ReQON", 1]
+        ]
+      }
+
+      @query.merge_array(@query_param)
+      assert_equal @expected, @query.options
+    end
+  end
+
   context "#limit" do
     setup do
       @query = Montage::Query.new(schema: "bob_ross_paintings")

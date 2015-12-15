@@ -67,7 +67,7 @@ module Montage
       if position.nil?
         arr.push(query_param)
       else
-        arr[position].replace(query_param)
+        arr[position] = query_param
       end
     end
 
