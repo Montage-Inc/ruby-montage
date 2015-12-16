@@ -100,26 +100,31 @@ class Montage::QueryTest < Minitest::Test
       assert_equal @expected, @query.limit.options["$query"]
     end
   end
-  #
-  # context "#offset" do
-  #   setup do
-  #     @query = Montage::Query.new(schema: "bob_ross_paintings")
-  #     @expected = {
-  #       "$schema" => "bob_ross_paintings",
-  #       "$query" => { "$filter" => {} },
-  #       "$offset" => 10
-  #     }
-  #   end
-  #
-  #   should "append the offset attribute to the query body" do
-  #     assert_equal @expected, @query.offset(10).query
-  #   end
-  #
-  #   should "set the default to nil" do
-  #     assert_equal({ filter: {}, offset: nil }, @query.offset.query)
-  #   end
-  # end
-  #
+
+  context "#offset" do
+    setup do
+      @query = Montage::Query.new(schema: "bob_ross_paintings")
+    end
+
+    should "append the offset attribute to the query body" do
+      @expected = [["$filter", []], ["$offset", 14]]
+
+      assert_equal @expected, @query.offset(14).options["$query"]
+    end
+
+    should "replace existing offset attributes" do
+      @expected = [["$filter", []], ["$offset", 14]]
+
+      assert_equal @expected, @query.offset(1).offset(14).options["$query"]
+    end
+
+    should "set the default to nil" do
+      @expected = [["$filter", []], ["$offset", nil]]
+
+      assert_equal @expected, @query.offset.options["$query"]
+    end
+  end
+
   # context "#order" do
   #   setup do
   #     @query = Montage::Query.new(schema: "bob_ross_paintings")

@@ -86,13 +86,15 @@ module Montage
 
     # Defines the offset to apply to the query, defaults to nil
     #
-    # Merges a hash:
-    #   { offset: 10 }
-    #
-    # Returns a copy of self
+    # * *Args* :
+    #   - +value+ -> The desired offset value
+    # * *Returns* :
+    #   - An updated copy of self
+    # * *Examples* :
+    #    ["$offset", 14]
     #
     def offset(value = nil)
-      clone.tap { |r| r.query.merge!(offset: value) }
+      clone.tap { |r| r.merge_array(["$offset", value]) }
     end
 
     # Defines the order clause for the query and merges it into the query hash
