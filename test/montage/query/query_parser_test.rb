@@ -1,5 +1,5 @@
-require File.dirname(__FILE__) + '/../minitest_helper.rb'
-require 'montage/query_parser'
+require File.dirname(__FILE__) + '/../../minitest_helper.rb'
+require 'montage/query/query_parser'
 
 class Montage::QueryParserTest < Minitest::Test
   context "#get_column_name" do
