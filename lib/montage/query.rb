@@ -23,10 +23,8 @@ module Montage
     #   - +InvalidAttributeFormat+ -> If the declared schema is not a string or
     #     contains non-alphanumeric characters.  Underscore ("_") is allowed!
     # * *Examples* :
-    #   - +Initialize+
-    #      @query = Montage::Query.new(schema: 'testing')
-    #   - +Return+
-    #      <Montage::Query:ID @query={"$schema"=>"testing", "$query"=>[["$filter", []]]}, @schema="testing">
+    #    @query = Montage::Query.new(schema: 'testing')
+    #    => <Montage::Query:ID @query={"$schema"=>"testing", "$query"=>[["$filter", []]]}, @schema="testing">
     #
     def initialize(params = {})
       @schema = params[:schema]
@@ -80,7 +78,7 @@ module Montage
     #   - An updated copy of self
     # * *Examples* :
     #    @query.limit(99).options
-    #    {"$schema"=>"testing", "$query"=>[["$filter", []], ["$limit", 99]]}
+    #    => {"$schema"=>"testing", "$query"=>[["$filter", []], ["$limit", 99]]}
     #
     def limit(max = nil)
       clone.tap { |r| r.merge_array(["$limit", max]) }
@@ -94,7 +92,7 @@ module Montage
     #   - An updated copy of self
     # * *Examples* :
     #    @query.offset(14).options
-    #    {"$schema"=>"testing", "$query"=>[["$filter", []], ["$offset", 14]]}
+    #    => {"$schema"=>"testing", "$query"=>[["$filter", []], ["$offset", 14]]}
     #
     def offset(value = nil)
       clone.tap { |r| r.merge_array(["$offset", value]) }
@@ -109,9 +107,12 @@ module Montage
     # * *Returns* :
     #   - An updated copy of self
     # * *Examples* :
+    #   - String
     #    @query.order("foo asc").options
+    #    => {"$schema"=>"testing", "$query"=>[["$filter", []], ["$order_by", ["$asc", "foo"]]]}
+    #   - Hash
     #    @query.order(:foo => :asc).options
-    #    {"$schema"=>"testing", "$query"=>[["$filter", []], ["$order_by", ["$asc", "foo"]]]}
+    #    => {"$schema"=>"testing", "$query"=>[["$filter", []], ["$order_by", ["$asc", "foo"]]]}
     #
     def order(clause = {})
       clone.tap { |r| r.merge_array(OrderParser.new(clause).parse) }

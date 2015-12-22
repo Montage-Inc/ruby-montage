@@ -5,7 +5,8 @@ module Montage
 
     attr_reader :clause
 
-    # Creates a properly formatted ReQON clause object
+    # Creates an OrderParser instance based on a clause argument.  The instance
+    # can then be parsed into a valid ReQON string for queries
     #
     # * *Args* :
     #   - +clause+ -> A hash or string ordering value
@@ -17,10 +18,14 @@ module Montage
     #
     def initialize(clause)
       @clause = clause
-      fail ClauseFormatError, "Message" unless clause_valid?
+      fail(
+        ClauseFormatError, "Order direction missing or blank clause found!"
+      ) unless clause_valid?
     end
 
-    # Validates clause arguments
+    # Validates clause arguments by checking a hash for a full word match of
+    # "asc" or "desc".  String clauses are rejected if they are blank or
+    # consist entirely of whitespace
     #
     # * *Returns* :
     #   - A boolean
@@ -42,7 +47,7 @@ module Montage
     # * *Examples* :
     #    @clause = { test: "asc"}
     #    @clause.parse
-    #    ["$order_by", ["$asc", "test"]]
+    #    => ["$order_by", ["$asc", "test"]]
     #
     def parse_hash
       direction = clause.values.first
@@ -57,7 +62,7 @@ module Montage
     # * *Examples* :
     #    @clause = "happy_trees desc"
     #    @clause.parse
-    #    ["$order_by", ["$desc", "happy_trees"]]
+    #    => ["$order_by", ["$desc", "happy_trees"]]
     #
     def parse_string
       direction = clause.split[1]
