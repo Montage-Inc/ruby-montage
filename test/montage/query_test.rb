@@ -125,28 +125,24 @@ class Montage::QueryTest < Minitest::Test
     end
   end
 
-  # context "#order" do
-  #   setup do
-  #     @query = Montage::Query.new(schema: "bob_ross_paintings")
-  #     @expected = { filter: {}, order_by: "foobar",ordering: "asc" }
-  #   end
-  #
-  #   should "append the order attribute to the query body" do
-  #     assert_equal @expected, @query.order("foobar asc").query
-  #   end
-  #
-  #   should "set the default sort order to asc if not passed in" do
-  #     assert_equal @expected, @query.order("foobar").query
-  #   end
-  #
-  #   should "set the order to empty" do
-  #     assert_equal({ filter: {}, order_by: "",ordering: "" }, @query.order.query)
-  #   end
-  #
-  #   should "accept and properly parse a hash" do
-  #     assert_equal @expected, @query.order(foobar: :asc).query
-  #   end
-  # end
+  context "#order" do
+    setup do
+      @query = Montage::Query.new(schema: "bob_ross_paintings")
+      @expected = [["$filter", []], ["$order_by", ["$asc", "foo"]]]
+    end
+
+    should "append the order attribute to the query body" do
+      assert_equal @expected, @query.order("foo asc").options["$query"]
+    end
+
+    should "set the default sort order to asc if not passed in" do
+      assert_equal @expected, @query.order("foo").options["$query"]
+    end
+
+    should "accept and properly parse a hash" do
+      assert_equal @expected, @query.order(foo: :asc).options["$query"]
+    end
+  end
 
   # context "#where" do
   #   setup do

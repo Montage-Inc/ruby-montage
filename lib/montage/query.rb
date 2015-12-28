@@ -1,5 +1,6 @@
 require 'montage/errors'
-require 'montage/query_parser'
+require 'montage/query/query_parser'
+require 'montage/query/order_parser'
 require 'montage/support'
 require 'json'
 
@@ -22,10 +23,8 @@ module Montage
     #   - +InvalidAttributeFormat+ -> If the declared schema is not a string or
     #     contains non-alphanumeric characters.  Underscore ("_") is allowed!
     # * *Examples* :
-    #   - +Initialize+
-    #      @query = Montage::Query.new(schema: 'testing')
-    #   - +Return+
-    #      => #<Montage::Query:ID @query={"$schema"=>"testing", "$query"=>[["$filter", []]]}, @schema="testing">
+    #    @query = Montage::Query.new(schema: 'testing')
+    #    => <Montage::Query:ID @query={"$schema"=>"testing", "$query"=>[["$filter", []]]}, @schema="testing">
     #
     def initialize(params = {})
       @schema = params[:schema]
@@ -78,7 +77,8 @@ module Montage
     # * *Returns* :
     #   - An updated copy of self
     # * *Examples* :
-    #    ["$limit", 99]
+    #    @query.limit(99).options
+    #    => {"$schema"=>"testing", "$query"=>[["$filter", []], ["$limit", 99]]}
     #
     def limit(max = nil)
       clone.tap { |r| r.merge_array(["$limit", max]) }
@@ -91,7 +91,8 @@ module Montage
     # * *Returns* :
     #   - An updated copy of self
     # * *Examples* :
-    #    ["$offset", 14]
+    #    @query.offset(14).options
+    #    => {"$schema"=>"testing", "$query"=>[["$filter", []], ["$offset", 14]]}
     #
     def offset(value = nil)
       clone.tap { |r| r.merge_array(["$offset", value]) }
@@ -99,29 +100,22 @@ module Montage
 
     # Defines the order clause for the query and merges it into the query hash
     #
-    # Accepts either a string or a hash:
-    #   order("foo asc") or
-    #   order(:foo => :asc) or
-    #   order(:foo => "asc")
-    #
-    # Defaults the direction to asc if no value is passed in for that, or if it is not a valid value
-    #
-    # Merges a hash:
-    #   { order: "foo asc" }
-    #
-    # Returns a copy of self
+    # * *Args* :
+    #   - +clause+ -> A hash or string value containing the field to order by
+    #     and the direction.  Valid directions are "asc" and "desc".  String
+    #     values will default to "asc" if omitted or incorrect.
+    # * *Returns* :
+    #   - An updated copy of self
+    # * *Examples* :
+    #   - String
+    #    @query.order("foo asc").options
+    #    => {"$schema"=>"testing", "$query"=>[["$filter", []], ["$order_by", ["$asc", "foo"]]]}
+    #   - Hash
+    #    @query.order(:foo => :asc).options
+    #    => {"$schema"=>"testing", "$query"=>[["$filter", []], ["$order_by", ["$asc", "foo"]]]}
     #
     def order(clause = {})
-      if clause.is_a?(Hash)
-        direction = clause.values.first.to_s
-        field = clause.keys.first.to_s
-      else
-        direction = clause.split(" ")[1]
-        field = clause.split(" ")[0]
-        direction = "asc" unless %w(asc desc).include?(direction)
-      end
-
-      clone.tap{ |r| r.query.merge!(order_by: field, ordering: direction) }
+      clone.tap { |r| r.merge_array(OrderParser.new(clause).parse) }
     end
 
     # Parses the SQL string passed into the method
