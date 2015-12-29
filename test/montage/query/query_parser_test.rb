@@ -92,31 +92,34 @@ class Montage::QueryParserTest < Minitest::Test
   context "#parse_hash" do
     context "with a single argument" do
       setup do
-        @parser = Montage::QueryParser.new({foo: "bar"})
+        @parser = Montage::QueryParser.new(foo: "bar")
       end
 
       should "properly parse the query" do
-        assert_equal({foo:"bar"}, @parser.parse_hash)
+        assert_equal [["foo", "bar"]], @parser.parse_hash
       end
     end
 
     context "with two arguments" do
       setup do
-        @parser = Montage::QueryParser.new(foo: "bar", bar: [1,2,3])
+        @parser = Montage::QueryParser.new(foo: "bar", bar: [1, 2, 3])
       end
 
       should "properly parse the query" do
-        assert_equal({foo:"bar", bar__in: [1,2,3]}, @parser.parse_hash)
+        assert_equal [%w(foo bar), ["bar__in", [1, 2, 3]]], @parser.parse_hash
       end
     end
 
     context "with multiple arguments" do
       setup do
-        @parser = Montage::QueryParser.new(foo:42, bar: [1,2,3], foobar:50)
+        @parser = Montage::QueryParser.new(foo: 42, bar: [1, 2, 3], foobar: 50)
       end
 
-      should "peoperly parse the query" do
-        assert_equal({foo:42, bar__in: [1,2,3], foobar:50}, @parser.parse_hash)
+      should "properly parse the query" do
+        assert_equal(
+          [["foo", 42], ["bar__in", [1, 2, 3]], ["foobar", 50]],
+          @parser.parse_hash
+        )
       end
     end
   end
@@ -128,17 +131,17 @@ class Montage::QueryParserTest < Minitest::Test
       end
 
       should "properly parse the query" do
-        assert_equal({foo:"bar"}, @parser.parse_string)
+        assert_equal [%w(foo bar)], @parser.parse_string
       end
     end
 
     context "with an and statement" do
       setup do
-        @parser = Montage::QueryParser.new("foo = 'bar' AND bar = 'foo'")
+        @parser = Montage::QueryParser.new("foo = 'test' AND bar = 'doge'")
       end
 
       should "properly parse the query" do
-        assert_equal({foo:"bar", bar:"foo"}, @parser.parse_string)
+        assert_equal [%w(foo test), %w(bar doge)], @parser.parse_string
       end
     end
 
@@ -148,86 +151,146 @@ class Montage::QueryParserTest < Minitest::Test
       end
 
       should "properly parse the query" do
-        assert_equal({foo:"bar", bar:"foo", foobar__lt: 50}, @parser.parse_string)
+        assert_equal(
+          [%w(foo bar), %w(bar foo), ["foobar", ["$__lt", 50]]],
+          @parser.parse_string
+        )
       end
     end
   end
 
   context "#parse" do
     should "properly parse a query that has IN in the search string" do
-      assert_equal({foo__icontains: "kings"}, Montage::QueryParser.new("foo ilike 'kings'").parse)
+      assert_equal(
+        [["foo", ["$__icontains", "kings"]]],
+        Montage::QueryParser.new("foo ilike 'kings'").parse
+      )
     end
 
     should "properly parse a query that has the word and in the search string" do
-      assert_equal({foo: "Fruit and Nut"}, Montage::QueryParser.new("foo = 'Fruit and Nut'").parse)
+      assert_equal(
+        [["foo", "Fruit and Nut"]],
+        Montage::QueryParser.new("foo = 'Fruit and Nut'").parse
+      )
     end
 
     should "properly parse an = query" do
-      assert_equal({ foo: "Foo Bar" }, Montage::QueryParser.new("foo = 'Foo Bar'").parse)
+      assert_equal(
+        [["foo", "Foo Bar"]],
+        Montage::QueryParser.new("foo = 'Foo Bar'").parse
+      )
     end
 
     should "properly parse a != query" do
-      assert_equal({ foo__not: "bar" }, Montage::QueryParser.new("foo != 'bar'").parse)
+      assert_equal(
+        [["foo", ["$__not", "bar"]]],
+        Montage::QueryParser.new("foo != 'bar'").parse
+      )
     end
 
     should "properly parse a > query" do
-      assert_equal({ on_hand__gt: 0 }, Montage::QueryParser.new("on_hand > 0").parse)
+      assert_equal(
+        [["on_hand", ["$__gt", 0]]],
+        Montage::QueryParser.new("on_hand > 0").parse
+      )
     end
 
     should "properly parse a >= query" do
-      assert_equal({ foo__gte: "bar" }, Montage::QueryParser.new("foo >= 'bar'").parse)
+      assert_equal(
+        [["foo", ["$__gte", "bar"]]],
+        Montage::QueryParser.new("foo >= 'bar'").parse
+      )
     end
 
     should "properly parse a < query" do
-      assert_equal({ foo__lt: "bar" }, Montage::QueryParser.new("foo < 'bar'").parse)
+      assert_equal(
+        [["foo", ["$__lt", "bar"]]],
+        Montage::QueryParser.new("foo < 'bar'").parse
+      )
     end
 
     should "properly parse a <= query" do
-      assert_equal({ foo__lte: "bar" }, Montage::QueryParser.new("foo <= 'bar'").parse)
+      assert_equal(
+        [["foo", ["$__lte", "bar"]]],
+        Montage::QueryParser.new("foo <= 'bar'").parse
+      )
     end
 
     should "properly parse an IN query using array syntax" do
-      assert_equal({ foo__in: ["bar","barb","barber"] }, Montage::QueryParser.new({foo: ['bar','barb','barber']}).parse)
+      assert_equal(
+        [["foo__in", %w(bar barb barber)]],
+        Montage::QueryParser.new(foo: %w(bar barb barber)).parse
+      )
     end
 
     should "properly parse a = query with a float" do
-      assert_equal({ foo__lte: 1.5 }, Montage::QueryParser.new("foo <= 1.5").parse)
+      assert_equal(
+        [["foo", ["$__lte", 1.5]]],
+        Montage::QueryParser.new("foo <= 1.5").parse
+      )
     end
 
     should "properly parse an IN query" do
-      assert_equal({ foo__in: ["bar","barb","barber"] }, Montage::QueryParser.new("foo IN (bar,barb,barber)").parse)
+      assert_equal(
+        [["foo", ["$__in", %w(bar barb barber)]]],
+        Montage::QueryParser.new("foo IN (bar,barb,barber)").parse
+      )
     end
 
     should "properly parse an NOT IN query" do
-      assert_equal({ foo__notin: ["bar","barb","barber"] }, Montage::QueryParser.new("foo NOT IN (bar,barb,barber)").parse)
+      assert_equal(
+        [["foo", ["$__notin", %w(bar barb barber)]]],
+        Montage::QueryParser.new("foo NOT IN (bar,barb,barber)").parse
+      )
     end
 
     should "make all items a string if first item is a string" do
-      assert_equal({ foo__notin: ["bar","barb","barber","1"] }, Montage::QueryParser.new("foo NOT IN (bar,barb,barber,1)").parse)
+      assert_equal(
+        [["foo", ["$__notin", %w(bar barb barber 1)]]],
+        Montage::QueryParser.new("foo NOT IN (bar,barb,barber,1)").parse
+      )
     end
 
     should "make all items an int if first item is an int" do
-      assert_equal({ foo__notin: [1,2,0,0] }, Montage::QueryParser.new("foo NOT IN (1,2,'test','lol')").parse)
+      assert_equal(
+        [["foo", ["$__notin", [1, 2, 0, 0]]]],
+        Montage::QueryParser.new("foo NOT IN (1,2,'test','lol')").parse
+      )
     end
 
     should "make all items a float if first item is a float" do
-      assert_equal({ foo__notin: [1.4,2,0,0] }, Montage::QueryParser.new("foo NOT IN (1.4,2,'test','lol')").parse)
+      assert_equal(
+        [["foo", ["$__notin", [1.4, 2.0, 0, 0]]]],
+        Montage::QueryParser.new("foo NOT IN (1.4, 2, 'test', 'lol')").parse
+      )
     end
 
     should "properly parse a LIKE query" do
-      assert_equal({ foo__contains: "bar" }, Montage::QueryParser.new("foo LIKE 'bar'").parse)
+      assert_equal(
+        [["foo", ["$__contains", "bar"]]],
+        Montage::QueryParser.new("foo LIKE 'bar'").parse
+      )
     end
 
     should "properly parse an ILIKE query" do
-      assert_equal({ foo__icontains: "bar" }, Montage::QueryParser.new("foo ILIKE 'bar'").parse)
+      assert_equal(
+        [["foo", ["$__icontains", "bar"]]],
+        Montage::QueryParser.new("foo ILIKE 'bar'").parse
+      )
     end
 
     should "properly parse an includes query" do
-      assert_equal({ foo__includes: ["foo"]}, Montage::QueryParser.new("foo includes #{["foo"].to_json}").parse)
+      assert_equal(
+        [["foo", ["$__includes", ["foo"]]]],
+        Montage::QueryParser.new("foo includes #{["foo"].to_json}").parse
+      )
     end
 
     should "properly parse an intersects query" do
-      assert_equal({ foo__intersects: ["foo"]}, Montage::QueryParser.new("foo intersects #{["foo"].to_json}").parse)
+      assert_equal(
+        [["foo", ["$__intersects", ["foo"]]]],
+        Montage::QueryParser.new("foo intersects #{["foo"].to_json}").parse
+      )
     end
   end
 

@@ -75,23 +75,23 @@ module Montage
     # Parse a hash type query
     #
     def parse_hash
-      Hash[
-        query.map do |key, value|
-          new_key = value.is_a?(Array) ? "#{key}__in".to_sym : key
-          [new_key, value]
-        end
-      ]
+      query.map do |key, value|
+        new_key = value.is_a?(Array) ? "#{key}__in" : key
+        ["#{new_key}", value]
+      end
     end
 
     # Parse a string type query
     #
     def parse_string
-      Hash[
-        query.split(/\band\b(?=([^']*'[^']*')*[^']*$)/i).map do |part|
-          column_name, operator, value = get_parts(part)
-          ["#{column_name}#{operator}".to_sym, value]
+      query.split(/\band\b(?=(?:[^']|'[^']*')*$)/i).map do |part|
+        column_name, operator, value = get_parts(part)
+        if operator == ""
+          ["#{column_name}", value]
+        else
+          ["#{column_name}", ["$#{operator}", value]]
         end
-      ]
+      end
     end
 
     # Parse the clause into a Montage query

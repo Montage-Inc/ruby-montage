@@ -142,7 +142,7 @@ module Montage
     #   - A copy of self
     #
     def where(clause)
-      clone.tap { |r| r.query[:filter].merge!(QueryParser.new(clause).parse) }
+      clone.tap { |r| r.merge_array(["$filter", QueryParser.new(clause).parse]) }
     end
 
     # Select a set of columns from the result set
