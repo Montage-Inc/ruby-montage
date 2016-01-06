@@ -98,7 +98,8 @@ module Montage
       clone.tap { |r| r.merge_array(["$offset", value]) }
     end
 
-    # Defines the order clause for the query and merges it into the query hash
+    # Defines the order clause for the query and merges it into the query array.
+    # See Montage::OrderParser for specifics
     #
     # * *Args* :
     #   - +clause+ -> A hash or string value containing the field to order by
@@ -118,28 +119,20 @@ module Montage
       clone.tap { |r| r.merge_array(OrderParser.new(clause).parse) }
     end
 
-    # Parses the SQL string passed into the method
-    #
-    # Raises an exception if it is not a valid query (at least three "words"):
-    #   parse_string_clause("foo bar")
-    #
-    # Raises an exception if the operator given is not a valid operator
-    #   parse_string_clause("foo * 'bar'")
-    #
-    # Returns a hash:
-    #   parse_string_clause("foo <= 1")
-    #   => { foo__lte: 1.0 }
-    #
-
-    # Adds a where clause to the query filter hash
+    # Adds a where clause to the ReQON filter array.  See Montage::QueryParser
+    # for specifics
     #
     # * *Args* :
     #   - +clause+ -> A hash or string containing desired options
-    # * *Example* :
-    #   - where(foo: 1)
-    #   - where("foo > 1")
     # * *Returns* :
     #   - A copy of self
+    # * *Examples* :
+    #   - String
+    #    @query.where("tree_happiness_level >= 99").options
+    #    => {"$schema"=>"test", "$query"=>[["$filter", [["tree_happiness_level", ["$__gte", 99]]]]]}
+    #   - Hash
+    #    @query.where(cloud_type: "almighty").options
+    #    => {"$schema"=>"test", "$query"=>[["$filter", [["cloud_type", "almighty"]]]]}
     #
     def where(clause)
       clone.tap { |r| r.merge_array(["$filter", QueryParser.new(clause).parse]) }
