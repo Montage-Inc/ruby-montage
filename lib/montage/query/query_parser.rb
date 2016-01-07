@@ -15,17 +15,47 @@ module Montage
       is_s?: :to_s
     }
 
+    # Creates a QueryParser instance based on a query argument.  The instance
+    # can then be parsed into a ReQON compatible array and used as a filter
+    # for queries
+    #
+    # * *Args* :
+    #   - +query+ -> A hash or string that includes the database column name, a
+    #     logical operator, and the associated value
+    # * *Returns* :
+    #   - A Montage::QueryParser instance
+    #
     def initialize(query)
       @query = query
     end
 
     # Parse the column name from the specific query part
     #
+    # * *Args* :
+    #   - +part+ -> The query string
+    #   - +splitter+ -> The value to split on
+    # * *Returns* :
+    #   - A string value for the provided column name
+    # * *Examples* :
+    #    @part = "bobross = 'amazing'"
+    #    get_column_name(@part, " ")
+    #    => "bobross"
+    #
     def get_column_name(part, splitter = " ")
       part.downcase.split(splitter)[0].strip
     end
 
     # Grabs the proper query operator from the string
+    #
+    # * *Args* :
+    #   - +part+ -> The query string
+    # * *Returns* :
+    #   - An array containing the supplied logical operator and the Montage
+    #     equivalent
+    # * *Examples* :
+    #    @part = "tree_happiness_level > 9"
+    #    get_query_operator(@part)
+    #    => [">", "__gt"]
     #
     def get_query_operator(part)
       operator = Montage::Operators.find_operator(part)
@@ -34,11 +64,32 @@ module Montage
 
     # Extract the condition set from the given clause
     #
+    # * *Args* :
+    #   - +clause+ -> The query string
+    #   - +splitter+ -> The logical operator to split on
+    # * *Returns* :
+    #   - The value portion of the query
+    # * *Examples* :
+    #    @part = "tree_happiness_level > 9"
+    #    parse_condition_set(@part, "<")
+    #    => "9"
+    #
     def parse_condition_set(clause, splitter = " ")
       clause.split(/#{splitter}/i)[-1].strip
     end
 
-    # Parse a single portion of the query string
+    # Parse a single portion of the query string.  String values representing
+    # a float or interger are coerced into actual numerical values.  Newline
+    # characters are removed and single quotes are replaced with double quotes
+    #
+    # * *Args* :
+    #   - +part+ -> The value element extracted from the query string
+    # * *Returns* :
+    #   - A parsed form of the value element
+    # * *Examples* :
+    #    @part = "9"
+    #    parse_part(@part)
+    #    => 9
     #
     def parse_part(part)
       parsed_part = JSON.parse(part) rescue part
@@ -58,14 +109,27 @@ module Montage
 
     # Get all the parts of the query string
     #
+    # * *Args* :
+    #   - +str+ -> The query string
+    # * *Returns* :
+    #   - An array containing the column name, the montage operator, and the
+    #     value for comparison.
+    # * *Raises* :
+    #   - +QueryError+ -> When incomplete queries or queries without valid
+    #     operators are initialized
+    # * *Examples* :
+    #    @part = "tree_happiness_level > 9"
+    #    get_parts(@part)
+    #    => ["tree_happiness_level", "__gt", 9]
+    #
     def get_parts(str)
       operator, montage_operator = get_query_operator(str)
 
-      raise QueryError, "The operator you have used is not a valid Montage query operator" unless montage_operator
+      fail QueryError, "Invalid Montage query operator!" unless montage_operator
 
       column_name = get_column_name(str, operator)
 
-      raise QueryError, "Your query has an undetermined error" unless column_name
+      fail QueryError, "Your query has an undetermined error" unless column_name
 
       value = parse_part(parse_condition_set(str, operator))
 
@@ -74,27 +138,43 @@ module Montage
 
     # Parse a hash type query
     #
+    # * *Returns* :
+    #   - A ReQON compatible array
+    # * *Examples* :
+    #    @test = Montage::QueryParser.new(tree_status: "happy")
+    #    @test.parse_hash
+    #    => [["tree_status", "happy"]]
+    #
     def parse_hash
-      Hash[
-        query.map do |key, value|
-          new_key = value.is_a?(Array) ? "#{key}__in".to_sym : key
-          [new_key, value]
-        end
-      ]
+      query.map do |key, value|
+        new_key = value.is_a?(Array) ? "#{key}__in" : key
+        ["#{new_key}", value]
+      end
     end
 
-    # Parse a string type query
+    # Parse a string type query.  Splits multiple conditions on case insensitive
+    # "and" strings that do not fall within single quotations. Note that the
+    # Montage equals operator is supplied as a blank string
+    #
+    # * *Returns* :
+    #   - A ReQON compatible array
+    # * *Examples* :
+    #    @test = Montage::QueryParser.new("tree_happiness_level > 9")
+    #    @test.parse_string
+    #    => [["tree_happiness_level", ["$__gt", 9]]]
     #
     def parse_string
-      Hash[
-        query.split(/\band\b(?=([^']*'[^']*')*[^']*$)/i).map do |part|
-          column_name, operator, value = get_parts(part)
-          ["#{column_name}#{operator}".to_sym, value]
+      query.split(/\band\b(?=(?:[^']|'[^']*')*$)/i).map do |part|
+        column_name, operator, value = get_parts(part)
+        if operator == ""
+          ["#{column_name}", value]
+        else
+          ["#{column_name}", ["$#{operator}", value]]
         end
-      ]
+      end
     end
 
-    # Parse the clause into a Montage query
+    # Determines query datatype and triggers the correct parsing
     #
     def parse
       if query.is_a?(Hash)
@@ -106,6 +186,15 @@ module Montage
 
     # Takes a string value and splits it into an array
     # Will coerce all values into the type of the first type
+    #
+    # * *Args* :
+    #   - +value+ -> A string value
+    # * *Returns* :
+    #   - A array form of the value argument
+    # * *Examples* :
+    #    @part = "(1, 2, 3)"
+    #    to_array(@part)
+    #    => [1, 2, 3]
     #
     def to_array(value)
       values = value.gsub(/('|\(|\))/, "").split(',')
