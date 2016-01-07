@@ -93,6 +93,7 @@ module Montage
     #
     def parse_part(part)
       parsed_part = JSON.parse(part) rescue part
+
       if is_i?(parsed_part)
         parsed_part.to_i
       elsif is_f?(parsed_part)
