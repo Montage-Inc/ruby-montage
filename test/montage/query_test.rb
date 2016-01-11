@@ -177,23 +177,23 @@ class Montage::QueryTest < Minitest::Test
   #   end
   # end
 
-  # context "#index" do
-  #   setup do
-  #     @query = Montage::Query.new(schema: "bob_ross_paintings")
-  #   end
-  #
-  #   should "append the index to the query body" do
-  #     expected = {
-  #       "$schema" => "bob_ross_paintings",
-  #       "$query" => [
-  #         ["$filter", []],
-  #         ["$index", "foo"]
-  #       ]
-  #     }
-  #
-  #     assert_equal expected, @query.index("foo").query
-  #   end
-  # end
+  context "#index" do
+    setup do
+      @query = Montage::Query.new(schema: "bob_ross_paintings")
+    end
+
+    should "append the index to the query body" do
+      expected = {
+        "$schema" => "bob_ross_paintings",
+        "$query" => [
+          ["$filter", []],
+          ["$index", "foo"]
+        ]
+      }
+
+      assert_equal expected, @query.index("foo").options
+    end
+  end
   #
   # context "#pluck" do
   #   setup do

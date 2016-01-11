@@ -160,12 +160,13 @@ module Montage
     # * *Args* :
     #   - +field+ -> The index value in string format
     # * *Example* :
-    #   - index("value")
+    #   - @query.index('foo').options
+    #    => {"$schema"=>"test", "$query"=>[["$filter", []], ["$index", "foo"]]}
     # * *Returns* :
     #   - A copy of self
     #
     def index(field)
-      clone.tap { |r| r.query.merge!(index: field) }
+      clone.tap { |r| r.merge_array(["$index", field]) }
     end
 
     # Pluck just one column from the result set
