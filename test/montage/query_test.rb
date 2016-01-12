@@ -194,37 +194,37 @@ class Montage::QueryTest < Minitest::Test
       assert_equal expected, @query.index("foo").options
     end
   end
-  #
-  # context "#pluck" do
-  #   setup do
-  #     @query = Montage::Query.new(schema: "bob_ross_paintings")
-  #   end
-  #
-  #   should "append pluck to the query body" do
-  #     expected = {
-  #       "$schema" => "bob_ross_paintings",
-  #       "$query" => [
-  #         ["$filter", []],
-  #         ["$pluck", "id"]
-  #       ]
-  #     }
-  #
-  #     assert_equal expected, @query.pluck("id").query
-  #   end
-  #
-  #   should "accept a symbol" do
-  #     expected = {
-  #       "$schema" => "bob_ross_paintings",
-  #       "$query" => [
-  #         ["$filter", []],
-  #         ["$pluck", "id"]
-  #       ]
-  #     }
-  #
-  #     assert_equal expected, @query.pluck(:id).query
-  #   end
-  # end
-  #
+
+  context "#pluck" do
+    setup do
+      @query = Montage::Query.new(schema: "bob_ross_paintings")
+    end
+
+    should "append pluck to the query body" do
+      expected = {
+        "$schema" => "bob_ross_paintings",
+        "$query" => [
+          ["$filter", []],
+          ["$pluck", ["id"]]
+        ]
+      }
+
+      assert_equal expected, @query.pluck("id").options
+    end
+
+    should "accept a symbol" do
+      expected = {
+        "$schema" => "bob_ross_paintings",
+        "$query" => [
+          ["$filter", []],
+          ["$pluck", ["id"]]
+        ]
+      }
+
+      assert_equal expected, @query.pluck(:id).options
+    end
+  end
+
   context "#select" do
     setup do
       @query = Montage::Query.new(schema: "bob_ross_paintings")

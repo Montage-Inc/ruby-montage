@@ -175,13 +175,14 @@ module Montage
     # * *Args* :
     #   - +column_name+ -> Accepts a single string or symbol value for the column
     # * *Example* :
-    #   - pluck(:id)
-    #   - pluck("column_name")
+    #    @query.pluck(:id)
+    #    @query.pluck("id")
+    #    => {"$schema"=>"test", "$query"=>[["$filter", []], ["$pluck", ["id"]]]}
     # * *Returns* :
     #   - A copy of self
     #
     def pluck(column_name)
-      clone.tap { |r| r.query.merge!(pluck: [column_name.to_s]) }
+      clone.tap { |r| r.merge_array(["$pluck", [column_name.to_s]]) }
     end
 
     # Parses the current query hash and returns a JSON string
