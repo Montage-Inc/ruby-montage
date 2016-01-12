@@ -144,38 +144,44 @@ class Montage::QueryTest < Minitest::Test
     end
   end
 
-  # context "#where" do
-  #   setup do
-  #     @query = Montage::Query.new(schema: "bob_ross_paintings")
-  #   end
-  #
-  #   should "append the filter to the query body" do
-  #     expected = {
-  #       "$schema" => "bob_ross_paintings",
-  #       "$query" => [
-  #         "$filter" => [
-  #           foo__lte: 1
-  #         ]
-  #       ]
-  #     }
-  #
-  #     assert_equal expected, @query.where("foo <= 1").query
-  #   end
-  #
-  #   should "work with AND operator" do
-  #     expected = {
-  #       "$schema" => "bob_ross_paintings",
-  #       "$query" => {
-  #         "$filter" => {
-  #           foo__lt: 5,
-  #           foo__gt: 3
-  #         }
-  #       }
-  #     }
-  #
-  #     assert_equal expected, @query.where("foo < 5 AND foo > 3").query
-  #   end
-  # end
+  context "#where" do
+    setup do
+      @query = Montage::Query.new(schema: "bob_ross_paintings")
+    end
+
+    should "append the filter to the query body" do
+      expected = {
+        "$schema" => "bob_ross_paintings",
+        "$query" => [
+          ["$filter", [["foo", ["$__lte", 1]]]]
+        ]
+      }
+
+      assert_equal expected, @query.where("foo <= 1").options
+    end
+
+    should "accept a hash" do
+      expected = {
+        "$schema" => "bob_ross_paintings",
+        "$query" => [
+          ["$filter", [["foo", 25], %w(bar test)]]
+        ]
+      }
+
+      assert_equal expected, @query.where(foo: 25, bar: 'test').options
+    end
+
+    should "work with AND operator" do
+      expected = {
+        "$schema" => "bob_ross_paintings",
+        "$query" => [
+          ["$filter", [["foo", ["$__lt", 5]], %w(bar test)]]
+        ]
+      }
+
+      assert_equal expected, @query.where("foo < 5 AND bar = 'test'").options
+    end
+  end
 
   context "#index" do
     setup do
