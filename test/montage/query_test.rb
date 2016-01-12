@@ -225,35 +225,35 @@ class Montage::QueryTest < Minitest::Test
   #   end
   # end
   #
-  # context "#select" do
-  #   setup do
-  #     @query = Montage::Query.new(schema: "bob_ross_paintings")
-  #   end
-  #
-  #   should "accept any number of parameters" do
-  #     expected = {
-  #       "$schema" => "bob_ross_paintings",
-  #       "$query" => [
-  #         ["$filter", []],
-  #         ["$pluck", %w(id name)]
-  #       ]
-  #     }
-  #
-  #     assert_equal expected, @query.select("id", "name").query
-  #   end
-  #
-  #   should "accept symbols" do
-  #     expected = {
-  #       "$schema" => "bob_ross_paintings",
-  #       "$query" => [
-  #         ["$filter", []],
-  #         ["$pluck", %w(id name email)]
-  #       ]
-  #     }
-  #
-  #     assert_equal expected, @query.select(:id, :name, :email).query
-  #   end
-  # end
+  context "#select" do
+    setup do
+      @query = Montage::Query.new(schema: "bob_ross_paintings")
+    end
+
+    should "accept any number of parameters" do
+      expected = {
+        "$schema" => "bob_ross_paintings",
+        "$query" => [
+          ["$filter", []],
+          ["$pluck", %w(id name)]
+        ]
+      }
+
+      assert_equal expected, @query.select("id", "name").options
+    end
+
+    should "accept symbols" do
+      expected = {
+        "$schema" => "bob_ross_paintings",
+        "$query" => [
+          ["$filter", []],
+          ["$pluck", %w(id name email)]
+        ]
+      }
+
+      assert_equal expected, @query.select(:id, :name, :email).options
+    end
+  end
 
   context "#to_json" do
     setup do

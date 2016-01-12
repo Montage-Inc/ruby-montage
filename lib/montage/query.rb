@@ -143,13 +143,14 @@ module Montage
     # * *Args* :
     #   - +Array+ -> Accepts multiple column names as a string or symbol
     # * *Example* :
-    #   - select(:id, :user_name)
-    #   - select("column_name")
+    #   @query.select("id", "name")
+    #   @query.select(:id, :name)
+    #   => {"$schema"=>"test", "$query"=>[["$filter", []], ["$pluck", ["id", "name"]]]}
     # * *Returns* :
     #   - A copy of self
     #
     def select(*args)
-      clone.tap { |r| r.query.merge!(pluck: args.map(&:to_s)) }
+      clone.tap { |r| r.merge_array(["$pluck", args.map(&:to_s)]) }
     end
 
     # Specifies an index to use on a query.
