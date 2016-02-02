@@ -73,6 +73,15 @@ class Montage::ClientTest < Minitest::Test
       assert_equal "production", client.environment
     end
 
+    should "accept a test_url parameter" do
+      client = Montage::Client.new do |c|
+        c.domain = "test"
+        c.test_url = "foo"
+      end
+
+      assert_equal "foo", client.test_url
+    end
+
     should "default the environment param to production" do
       client = Montage::Client.new do |c|
         c.domain = "test"
@@ -81,11 +90,28 @@ class Montage::ClientTest < Minitest::Test
       assert_equal "production", client.environment
     end
 
+    should "accept a test environment param" do
+      client = Montage::Client.new do |c|
+        c.domain = "test"
+        c.environment = "test"
+        c.test_url = "foo"
+      end
+    end
+
     should "raise an exception if an invalid environment is specified" do
       assert_raises(Montage::InvalidEnvironment) do
         Montage::Client.new do |c|
           c.domain = "test"
           c.environment = "foo"
+        end
+      end
+    end
+
+    should "raise an exception if the environment is test and no test_url is supplied" do
+      assert_raises(Montage::MissingAttributeError) do
+        Montage::Client.new do |c|
+          c.domain = "test"
+          c.environment = "test"
         end
       end
     end
