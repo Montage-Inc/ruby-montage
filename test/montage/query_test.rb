@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../minitest_helper.rb'
+require 'minitest_helper'
 require 'montage/query'
 
 class Montage::QueryTest < Minitest::Test
@@ -153,7 +153,7 @@ class Montage::QueryTest < Minitest::Test
       expected = {
         "$schema" => "bob_ross_paintings",
         "$query" => [
-          ["$filter", [["foo", ["$__lte", 1]]]]
+          ["$filter", [["foo", ["$lte", 1]]]]
         ]
       }
 
@@ -175,7 +175,7 @@ class Montage::QueryTest < Minitest::Test
       expected = {
         "$schema" => "bob_ross_paintings",
         "$query" => [
-          ["$filter", [["foo", ["$__lt", 5]], %w(bar test)]]
+          ["$filter", [["foo", ["$lt", 5]], %w(bar test)]]
         ]
       }
 

@@ -6,7 +6,7 @@ module Montage
       end
 
       def self.montage_operator
-        "__lte"
+        "$lte"
       end
 
       def self.==(value)
