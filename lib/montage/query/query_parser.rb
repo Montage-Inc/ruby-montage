@@ -55,7 +55,7 @@ module Montage
     # * *Examples* :
     #    @part = "tree_happiness_level > 9"
     #    get_query_operator(@part)
-    #    => [">", "__gt"]
+    #    => [">", "$gt"]
     #
     def get_query_operator(part)
       operator = Montage::Operators.find_operator(part)
@@ -79,7 +79,7 @@ module Montage
     end
 
     # Parse a single portion of the query string.  String values representing
-    # a float or interger are coerced into actual numerical values.  Newline
+    # a float or integer are coerced into actual numerical values.  Newline
     # characters are removed and single quotes are replaced with double quotes
     #
     # * *Args* :
@@ -120,7 +120,7 @@ module Montage
     # * *Examples* :
     #    @part = "tree_happiness_level > 9"
     #    get_parts(@part)
-    #    => ["tree_happiness_level", "__gt", 9]
+    #    => ["tree_happiness_level", "$gt", 9]
     #
     def get_parts(str)
       operator, montage_operator = get_query_operator(str)
@@ -147,8 +147,8 @@ module Montage
     #
     def parse_hash
       query.map do |key, value|
-        new_key = value.is_a?(Array) ? "#{key}__in" : key
-        ["#{new_key}", value]
+        new_value = value.is_a?(Array) ? ["$in", value] : value
+        [key.to_s, new_value]
       end
     end
 
@@ -169,7 +169,7 @@ module Montage
         if operator == ""
           ["#{column_name}", value]
         else
-          ["#{column_name}", ["$#{operator}", value]]
+          ["#{column_name}", ["#{operator}", value]]
         end
       end
     end

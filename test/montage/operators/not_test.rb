@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/../../minitest_helper.rb'
+require 'minitest_helper'
 require 'montage/operators/not'
 
 class Montage::Operators::NotTest < Minitest::Test

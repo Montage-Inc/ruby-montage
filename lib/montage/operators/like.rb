@@ -6,7 +6,7 @@ module Montage
       end
 
       def self.montage_operator
-        "__contains"
+        "$contains"
       end
 
       def self.==(value)

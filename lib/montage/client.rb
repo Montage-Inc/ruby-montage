@@ -18,7 +18,8 @@ module Montage
                   :password,
                   :domain,
                   :api_version,
-                  :environment
+                  :environment,
+                  :test_url
 
     # Initializes the client instance
     #
@@ -29,12 +30,14 @@ module Montage
     #   - +domain+ -> Project subdomain, required for initialization
     #   - +api_version+ -> API version to query against, defaults to 1
     #   - +environment+ -> Specifies desired environment for requests, defaults
-    #     to 'production'. Valid options are 'development' and 'production'.
+    #     to 'production'. Valid options are 'development', 'production', and 'test'.
+    #   - +test_url+ -> Test URL. Required when environment is set to 'test'.
     # * *Returns* :
     #   - A valid Montage::Client instance
     # * *Raises* :
     #   - +MissingAttributeError+ -> If the domain attribute is not specified
     #   - +InvalidEnvironment+ -> If the environment attribute is not set to 'production' or 'development'
+    #   - +MissingAttributeError+ -> If the test_url is not provided when environment is 'test'
     #
     def initialize
       @api_version = 1
@@ -42,6 +45,7 @@ module Montage
       yield(self) if block_given?
       fail MissingAttributeError, "You must declare the domain attribute" unless @domain
       fail InvalidEnvironment, "Valid options are 'production' and 'development'" unless environment_valid?
+      fail MissingAttributeError, "You must include a test_url for the 'test' environment" unless test_environment_valid?
     end
 
     # Verifies the Montage::Client instance environment
@@ -50,7 +54,17 @@ module Montage
     #   - A boolean
     #
     def environment_valid?
-      %w(production development).include?(@environment)
+      %w(test production development).include?(@environment)
+    end
+
+    # Verifies that the test_url is supplied when the environment is set to test
+    #
+    # * *Returns* :
+    #   - A boolean
+    #
+    def test_environment_valid?
+      return true unless @environment == "test"
+      !!@test_url
     end
 
     # Generates a base url for requests using the supplied environment and domain
@@ -59,8 +73,11 @@ module Montage
     #   - A string containing the constructed url
     #
     def default_url_prefix
-      return "https://#{domain}.dev.montagehot.club" if @environment == "development"
-      return "https://#{domain}.mntge.com" if @environment == "production"
+      case @environment
+      when "development" then "https://#{domain}.dev.montagehot.club"
+      when "production" then "https://#{domain}.mntge.com"
+      when "test" then @test_url
+      end
     end
 
     # Attempts to authenticate with the Montage API

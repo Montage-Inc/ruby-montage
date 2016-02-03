@@ -32,7 +32,7 @@ module Montage
     end
 
     def self.find_operator(query_string)
-      self.classes.find(Proc.new { Montage::Operators::Nil }) { |c| c == query_string }
+      self.classes.find(proc { Montage::Operators::Nil }) { |c| c == query_string }
     end
   end
 end
