@@ -153,6 +153,34 @@ module Montage
       clone.tap { |r| r.merge_array(["$pluck", args.map(&:to_s)]) }
     end
 
+    # Perform a `between` filter on the query
+    #
+    # * *Attributes* :
+    #   - +from+ -> The lower bound for the between filter. Can be a number, a
+    #     letter, or a string representation of a date.
+    #     +to+ -> The upper bound for the between filter. Can be a number, a
+    #     letter, or a string representation of a date.
+    #     +index+ -> The index to use when performing this filter
+    # * *Example* :
+    #   - @query.between(from: 1, to: 3, index: 'rank')
+    #   => {"$schema"=>"test", "$query"=>[["$filter", []], ["$between", [1, 3, 'rank']]]}
+    # * *Returns* :
+    #   - A copy of self
+    def between(args = {})
+      unless args[:from] && args[:to]
+        fail(
+          MissingAttributeError,
+          "You must supply the from and to attributes"
+        )
+      end
+
+      clone.tap do |r|
+        r.merge_array([
+          "$between", [args[:from], args[:to], args[:index]].compact
+        ])
+      end
+    end
+
     # Specifies an index to use on a query.
     #
     # * *Notes* :

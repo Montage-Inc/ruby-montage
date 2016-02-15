@@ -261,6 +261,48 @@ class Montage::QueryTest < Minitest::Test
     end
   end
 
+  context "#between" do
+    setup do
+      @query = Montage::Query.new(schema: "bob_ross_paintings")
+    end
+
+    should "create a proper query" do
+      expected = {
+        "$schema" => "bob_ross_paintings",
+        "$query" => [
+          ["$filter", []],
+          ["$between", [1, 3, 'rank']]
+        ]
+      }
+
+      assert_equal expected, @query.between(from: 1, to: 3, index: 'rank').options
+    end
+
+    should "require a from argument" do
+      assert_raises(Montage::MissingAttributeError) do
+        @query.between(to: 3, index: 'foo')
+      end
+    end
+
+    should "require a to argument" do
+      assert_raises(Montage::MissingAttributeError) do
+        @query.between(from: 1, index: 'bar')
+      end
+    end
+
+    should "not append an index if it is missing" do
+      expected = {
+        "$schema" => "bob_ross_paintings",
+        "$query" => [
+          ["$filter", []],
+          ["$between", [1, 3]]
+        ]
+      }
+
+      assert_equal expected, @query.between(from: 1, to: 3).options
+    end
+  end
+
   context "#to_json" do
     setup do
       @query = Montage::Query.new(schema: "test")
